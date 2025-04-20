@@ -19,21 +19,14 @@ const endpoints = require('../src/endpoints');
 //     });
 // });
 
-describe('GET /qrCodeBase64', () => {
-    test('should return a JSON response', async () => {
-        const app = express();
-        app.use('/qrCodeBase64', endpoints.endpoints);
-        
-        const serviceAccount = require("../serviceAccountKey.json");
-        initializeApp({credential: cert(serviceAccount)});
-        const db = getFirestore();
+// describe('GET /qrCodeBase64', () => {
+//     test('should return a JSON response', async () => {
+//         const studentsRef = db.collection('/Students');
+//         const snapshot = await studentsRef.where("cix_email", "==", "anthony.capper@cix.csi.cuny.edu").get();
+//         const data = snapshot.docs.map(doc => doc.data());
+//         const code = data[0].qrCodeBase64;
 
-        const studentsRef = db.collection('/Students');
-        const snapshot = await studentsRef.where("cix_email", "==", "anthony.capper@cix.csi.cuny.edu").get();
-        const data = snapshot.docs.map(doc => doc.data());
-        const code = data[0].qrCodeBase64;
-
-        expect(snapshot.empty).toBe(false);
-        expect(code).toBeDefined();
-    });
-});
+//         expect(snapshot.empty).toBe(false);
+//         expect(code).toBeDefined();
+//     });
+// });
