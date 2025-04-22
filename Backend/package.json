@@ -5,13 +5,13 @@
   "main": "server.ts",
   "scripts": {
     "test": "jest",
-    "start": "ts-node src/server.ts",
-    "dev": "nodemon"
+    "start": "ts-node src/server",
+    "dev": "nodemon --exec node --loader ts-node/esm src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^22.14.1",
@@ -25,8 +25,12 @@
   },
   "dependencies": {
     "@types/express": "^5.0.1",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "express": "^5.1.0",
     "firebase": "^11.6.0",
-    "firebase-admin": "^13.2.0"
+    "firebase-admin": "^13.2.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   }
 }
