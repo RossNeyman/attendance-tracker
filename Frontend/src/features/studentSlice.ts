@@ -1,9 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 interface Student {
-    // Add your student properties here
+    first_name: string;
+    last_name: string;
     cix_email: string;
-    [key: string]: any;
+    qr_code: string;
+  //  [key: string]: any;
 }
 
 interface ApiResponse {
