@@ -1,31 +1,115 @@
+// src/components/NavBar.tsx
+
+import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import { Link } from 'react-router-dom';
-import * as React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const NavBar: React.FC = () => {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        console.log("User logging out...");
+        alert("Logging out...");
+        navigate('/');
+    };
+
     return (
-        <AppBar position="static">
-            <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    Attendance Tracker
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                    <Button 
-                        color="inherit" 
-                        component={Link} 
+        <AppBar
+            position="sticky"
+            elevation={1}
+            sx={{
+                backgroundColor: 'transparent',
+                boxShadow: 'none',
+            }}
+        >
+            {/* Top Section: Logo Area (White Background) */}
+            <Box sx={{
+                backgroundColor: 'common.white',
+                px: { xs: 2, sm: 3 },
+                py: 1,
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+            }}>
+                {/* --- Modified Toolbar --- */}
+                <Toolbar
+                    disableGutters
+                    sx={{
+                        justifyContent: 'center', // <<< Center the content (logo)
+                    }}
+                >
+                    {/* Logo */}
+                    <Typography
+                        variant="h4" // <<< Made logo bigger (was h5)
+                        component={Link}
                         to="/home"
+                        sx={{
+                            fontFamily: '"Agbalumo", cursive',
+                            fontWeight: 'normal',
+                            textDecoration: 'none',
+                            // flexGrow: 1, // <<< Removed flexGrow
+                        }}
+                    >
+                        <span style={{ color: '#cb2323' }}>Class</span>
+                        <span style={{ color: '#2374cb' }}>TAP</span>
+                    </Typography>
+                </Toolbar>
+                {/* --- End Modified Toolbar --- */}
+            </Box>
+
+            {/* Bottom Section: Navigation Links (Dark Background) */}
+            <Box sx={{ backgroundColor: '#333333' }}>
+                <Toolbar
+                    variant="dense"
+                    sx={{
+                        display: 'flex',
+                        justifyContent: { xs: 'space-around', sm: 'center' },
+                        gap: { xs: 1, sm: 4 },
+                        flexWrap: 'wrap',
+                        minHeight: '48px',
+                    }}
+                >
+                    {/* Navigation Buttons */}
+                    <Button
+                        color="inherit"
+                        component={Link}
+                        to="/home"
+                        sx={{ color: 'common.white', textTransform: 'uppercase', fontWeight: 'medium' }}
                     >
                         Home
                     </Button>
-                    <Button 
-                        color="inherit" 
-                        component={Link} 
+                    <Button
+                        color="inherit"
+                        component={Link}
                         to="/scanner"
+                        sx={{ color: 'common.white', textTransform: 'uppercase', fontWeight: 'medium' }}
                     >
                         Scanner
                     </Button>
-                </Box>
-            </Toolbar>
+                    <Button
+                        color="inherit"
+                        component={Link}
+                        to="/logs"
+                        sx={{ color: 'common.white', textTransform: 'uppercase', fontWeight: 'medium' }}
+                    >
+                        Logs
+                    </Button>
+                    <Button
+                        color="inherit"
+                        component={Link}
+                        to="/account"
+                        sx={{ color: 'common.white', textTransform: 'uppercase', fontWeight: 'medium' }}
+                    >
+                        Account Settings
+                    </Button>
+                    <Button
+                        color="inherit"
+                        onClick={handleLogout}
+                        sx={{ color: 'common.white', textTransform: 'uppercase', fontWeight: 'medium' }}
+                    >
+                        Log Out
+                    </Button>
+                </Toolbar>
+            </Box>
         </AppBar>
     );
 };
