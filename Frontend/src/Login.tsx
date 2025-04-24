@@ -19,36 +19,33 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useNavigate } from 'react-router-dom'; // <--- Import useNavigate
 
-// Optional: Add Google Font link for Bebas Neue in public/index.html
+// Optional: Add Google Font link for Bebas Neue/Agbalumo in public/index.html
 // <link rel="preconnect" href="https://fonts.googleapis.com">
 // <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-// <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+// <link href="https://fonts.googleapis.com/css2?family=Agbalumo&family=Bebas+Neue&display=swap" rel="stylesheet">
 
-// Define the component using a function declaration or Function Component (FC) type
-export function Login () {  // --- State Hooks with Types ---
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // Type for anchor element
+export function Login() {
+  // --- Hooks ---
+  const navigate = useNavigate(); // <--- Get the navigate function
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [scannerCode, setScannerCode] = useState<string>('');
+  const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false);
 
-  const [showPassword, setShowPassword] = useState<boolean>(false); // Type boolean
-
-  const [username, setUsername] = useState<string>(''); // Type string
-  const [password, setPassword] = useState<string>(''); // Type string
-  const [scannerCode, setScannerCode] = useState<string>(''); // Type string
-  const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false); // Type boolean
-
-  // --- Event Handlers with Types ---
-
-  // Type the event as a React MouseEvent targeting an HTML Button
+  // --- Event Handlers ---
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = (): void => { // Explicit void return type
+  const handleMenuClose = (): void => {
     setAnchorEl(null);
   };
 
-  // Add type for the message parameter
   const handleMenuItemClick = (message: string): void => {
     alert(message);
     handleMenuClose();
@@ -58,7 +55,6 @@ export function Login () {  // --- State Hooks with Types ---
     setShowPassword(!showPassword);
   };
 
-  // Type the event for mouse down on the icon button
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>): void => {
     event.preventDefault();
   };
@@ -67,22 +63,39 @@ export function Login () {  // --- State Hooks with Types ---
     alert('New scanner code has been sent to your device');
   };
 
-  // Type the event for the link click
   const handleForgotLinkClick = (event: React.MouseEvent<HTMLAnchorElement>): void => {
     event.preventDefault();
     alert('Navigating to password recovery page');
+    // navigate('/forgot-password'); // Example navigation
   };
 
-  // Type the event for the input change, targeting an HTML Input element
+  const handleCreateAccountClick = (event: React.MouseEvent<HTMLAnchorElement>): void => {
+    event.preventDefault();
+    alert('Navigating to account creation page');
+    // navigate('/register'); // Example navigation
+  };
+
   const handleScannerCodeChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const value = event.target.value.replace(/[^0-9]/g, '').slice(0, 6);
     setScannerCode(value);
   };
 
-  // Type the event for the checkbox change
   const handleStayLoggedInChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-      setStayLoggedIn(event.target.checked);
-  }
+    setStayLoggedIn(event.target.checked);
+  };
+
+  const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    console.log('Attempting login with:', { username, password, stayLoggedIn });
+    alert(`Logging in with User ID: ${username}`);
+    // --- !!! --- On successful login, navigate to home --- !!! ---
+    // navigate('/home'); // <<< UNCOMMENT THIS LINE FOR REAL LOGIN
+  };
+
+  // --- NEW --- Handler for the test navigation button
+  const handleGoToHomeTest = () => {
+    navigate('/home'); // Navigate to the '/home' route
+  };
 
   return (
     <>
@@ -90,21 +103,22 @@ export function Login () {  // --- State Hooks with Types ---
       <GlobalStyles styles={{ body: { fontFamily: 'Arial, sans-serif' } }} />
 
       <Box sx={{
-          minHeight: '100vh',
-          backgroundColor: '#f5f5f5',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
+        minHeight: '100vh',
+        backgroundColor: '#f5f5f5',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
       >
-        {/* Hamburger Menu */}
+        {/* Hamburger Menu (Consider if needed on Login page) */}
         <Box sx={{ position: 'absolute', top: 15, left: 15, zIndex: 1100 }}>
-          <IconButton
+           {/* ... Hamburger Menu code ... */}
+           <IconButton
             id="hamburgerMenu"
             aria-controls={open ? 'basic-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
-            onClick={handleMenuClick} // Event type checked here
-            sx={{ fontSize: '24px', padding: '5px' }}
+            onClick={handleMenuClick}
+            sx={{ fontSize: '50px', padding: '5px' }}
           >
             <MenuIcon fontSize="inherit" />
           </IconButton>
@@ -125,7 +139,6 @@ export function Login () {  // --- State Hooks with Types ---
           </Menu>
         </Box>
 
-        {/* Main Content Area */}
         <Container
           maxWidth="sm"
           sx={{
@@ -135,183 +148,135 @@ export function Login () {  // --- State Hooks with Types ---
             justifyContent: 'center',
             alignItems: 'center',
             py: 4,
-            backgroundColor: 'rgb(222, 222, 222)',
-            width: '100vw',
-            height: '100vh',
-            maxWidth: '100vw !important',
-            padding: 0,
           }}
         >
-           <Box sx={{
-                flexGrow: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '20px',
-                width: '100%',
-            }}>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+          }}>
 
             {/* Logo */}
             <Typography
               variant="h1"
               component="div"
               sx={{
-                fontFamily: '"Agbalumo", cursive', // Using the new example font
-                // fontFamily: '"Bebas Neue", Arial, sans-serif', // Or keep Bebas Neue
-                fontSize: '100px',
+                fontFamily: '"Agbalumo", cursive',
+                fontSize: { xs: '100px', sm: '150px' },
                 fontWeight: 'normal',
                 textAlign: 'center',
-                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.15)',
-                mb: 5,
+                textShadow: '4px 2px 4px rgba(0, 0, 0, 0.15)',
+                mb: 3,
+                lineHeight: 1,
               }}
             >
               <span style={{ color: '#cb2323' }}>Class</span>
-              <span style={{ color: '#2374cb' }}>Tap</span>
+              <span style={{ color: '#2374cb' }}>TAP</span>
             </Typography>
 
-            {/* Login Form Section */}
-            <Box sx={{ width: '100%', maxWidth: '400px', mb: 3 }}>
-              {/* User ID */}
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body1" component="label" htmlFor="username" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
-                  User ID:
-                </Typography>
-                <TextField
-                  id="username"
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)} // Type inference works well here
-                />
-              </Box>
-
-              {/* Password */}
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body1" component="label" htmlFor="password" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
-                  Password:
-                </Typography>
-                <TextField
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)} // Type inference works well here
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleTogglePasswordVisibility}
-                          onMouseDown={handleMouseDownPassword} // Event type checked here
-                          edge="end"
-                          size="small"
-                        >
-                          {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
-
-              {/* Forgot Link */}
-              <Box sx={{ textAlign: 'right', fontSize: '14px', mb: 2 }}>
-                <Link href="#" onClick={handleForgotLinkClick} underline="hover"> {/* Event type checked here */}
-                  Forgot User/Password?
-                </Link>
-              </Box>
-
-              {/* Stay Logged In Checkbox */}
-              <FormControlLabel
-                control={<Checkbox
-                    id="stayLoggedIn"
-                    checked={stayLoggedIn}
-                    onChange={handleStayLoggedInChange} // Event type checked here
+            {/* Login Form Box */}
+            <Box
+              component="form"
+              onSubmit={handleLoginSubmit}
+              sx={{ width: '100%', maxWidth: '400px' }}
+            >
+              <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, borderRadius: '8px' }}>
+                {/* User ID */}
+                <Box sx={{ mb: 2 }}>
+                   {/* ... User ID field ... */}
+                   <Typography variant="body1" component="label" htmlFor="username" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
+                    User ID:
+                  </Typography>
+                  <TextField
+                    id="username"
+                    variant="outlined"
                     size="small"
-                 />}
-                label="Stay Logged-In Session?"
-                sx={{ display: 'block', mb: 2 }}
-              />
+                    fullWidth
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    autoComplete="username"
+                  />
+                </Box>
+
+                {/* Password */}
+                <Box sx={{ mb: 2 }}>
+                    {/* ... Password field ... */}
+                    <Typography variant="body1" component="label" htmlFor="password" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
+                      Password:
+                    </Typography>
+                    <TextField
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="current-password"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleTogglePasswordVisibility}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                              size="small"
+                            >
+                              {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                </Box>
+
+                {/* Links Box */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px', mb: 2 }}>
+                   {/* ... Links ... */}
+                   <Link href="#" onClick={handleCreateAccountClick} underline="hover">
+                    Create Account
+                  </Link>
+                  <Link href="#" onClick={handleForgotLinkClick} underline="hover">
+                    Forgot User/Password?
+                  </Link>
+                </Box>
+
+                {/* Stay Logged In Checkbox */}
+                <FormControlLabel
+                  control={<Checkbox id="stayLoggedIn" checked={stayLoggedIn} onChange={handleStayLoggedInChange} size="small" />}
+                  label="Stay Logged-In Session?"
+                  sx={{ display: 'block', mb: 3 }}
+                />
+
+                {/* Login Button */}
+                <Button type="submit" variant="contained" color="primary" fullWidth size="large" sx={{ py: 1.5, fontWeight: 'bold', textTransform: 'none' }}>
+                  Login
+                </Button>
+
+                {/* --- START: TEST NAVIGATION BUTTON --- */}
+                <Button
+                  variant="outlined" // Different style to distinguish it
+                  color="secondary"  // Different color
+                  fullWidth
+                  size="small"
+                  onClick={handleGoToHomeTest} // Use the new handler
+                  sx={{ mt: 2 }} // Add margin top for spacing
+                >
+                  (Test) Go to Home Page
+                </Button>
+                {/* --- END: TEST NAVIGATION BUTTON --- */}
+
+              </Paper>
             </Box>
 
-            {/* Scanner Section */}
-            <Paper
-              elevation={2}
-              sx={{
-                width: '100%',
-                maxWidth: '400px',
-                padding: '20px',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                backgroundColor: '#a1a1a1',
-              }}
-            >
-              <Typography variant="h6" component="h2" sx={{ fontSize: '18px', mt: 0, mb: 2 }}>
-                Use device as scanner:
-              </Typography>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body1" component="label" htmlFor="scannerCode" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
-                   Insert code:
-                </Typography>
-                <TextField
-                  id="scannerCode"
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  placeholder="______"
-                  value={scannerCode}
-                  onChange={handleScannerCodeChange} // Event type checked here
-                  inputProps={{
-                    maxLength: 6,
-                    inputMode: 'numeric',
-                    pattern: '\\d{6}',
-                    style: {
-                      fontFamily: 'monospace',
-                      fontSize: '24px',
-                      letterSpacing: '10px',
-                      textAlign: 'center',
-                      padding: '10px',
-                      backgroundImage: 'linear-gradient(to right, #ccc 1px, transparent 1px)',
-                      backgroundSize: 'calc((100% - 10px) / 6) 1px',
-                      backgroundRepeat: 'repeat-x',
-                      backgroundPosition: 'bottom 10px left 5px',
-                    }
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                        padding: 0,
-                     }
-                  }}
-                />
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="body2" sx={{ mr: 1 }}>
-                  Forgot code? →
-                </Typography>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={handleNewCodeClick} // Event type checked here
-                  sx={{
-                    backgroundColor: '#f0f0f0',
-                    color: '#333',
-                    border: '1px solid #ddd',
-                    boxShadow: 'none',
-                    '&:hover': {
-                      backgroundColor: '#e0e0e0',
-                      boxShadow: 'none',
-                    },
-                    padding: '3px 8px'
-                  }}
-                >
-                  New code
-                </Button>
-              </Box>
-            </Paper>
+            {/* Scanner Section (Commented Out) */}
+            {/* ... */}
+
           </Box>
         </Container>
       </Box>
@@ -319,4 +284,4 @@ export function Login () {  // --- State Hooks with Types ---
   );
 }
 
-// Make sure the default export matches the new component name
+// export default Login; // Uncomment if needed

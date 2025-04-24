@@ -1,65 +1,79 @@
-import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
-import { Container } from '@mui/material';
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import { Height } from '@mui/icons-material';
+import React, { useEffect, useRef, useState } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
 
 export function QrScanner() {
-    const videoRef = useRef<HTMLVideoElement | null>(null);
-    const [error, setError] = useState<string | null>(null);
     const [scanResult, setScanResult] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [isScanning, setIsScanning] = useState(false);
+    const scannerRef = useRef<Html5Qrcode | null>(null);
+    const qrRegionId = 'qr-reader';
 
+    const startScanner = async () => {
+        try {
+            const scanner = new Html5Qrcode(qrRegionId);
+            scannerRef.current = scanner;
+
+            const cameras = await Html5Qrcode.getCameras();
+            if (!cameras.length) {
+                setError('No cameras found.');
+                return;
+            }
+
+            setIsScanning(true);
+
+            await scanner.start(
+                cameras[0].id,
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 }
+                },
+                (decodedText) => {
+                    console.log("Scanned:", decodedText);
+                    setScanResult(decodedText);
+                    stopScanner(); // stop after success
+                },
+                (errorMessage) => {
+                    console.warn("Scan error:", errorMessage);
+                }
+            );
+        } catch (err) {
+            console.error('Failed to start scanner:', err);
+            setError('Could not start scanner.');
+        }
+    };
+
+    const stopScanner = async () => {
+        if (scannerRef.current) {
+            try {
+                await scannerRef.current.stop();
+                await scannerRef.current.clear();
+                setIsScanning(false);
+            } catch (err) {
+                console.error('Failed to stop scanner:', err);
+            }
+        }
+    };
 
     useEffect(() => {
-        // Request access to the camera
-        const getCameraStream = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                }
-            } catch (err) {
-                setError('Unable to access the camera. Please check your permissions.');
-                console.error(err);
-            }
-        };
-
-        getCameraStream();
-
-        const scanner = new Html5QrcodeScanner('reader', {
-            fps: 10,
-            qrbox: { height: 250, width: 250 },
-            rememberLastUsedCamera: true,
-        }, true);
-    
-        scanner.render(success, handleError);
-    
-        function success(decodedText: string, decodedResult: any) {
-            // Handle the decoded text here
-            setScanResult(decodedText);
-            console.log(`Decoded text: ${decodedText}`, decodedResult);
-        }
-        function handleError(err: any) {
-            // Handle the error here
-            console.error(`Error scanning: ${err}`);
-        }
-    
-
-        // Cleanup function to stop the camera when the component unmounts
         return () => {
-            if (videoRef.current && videoRef.current.srcObject) {
-                const stream = videoRef.current.srcObject as MediaStream;
-                stream.getTracks().forEach((track) => track.stop());
-            }
+            stopScanner(); // clean up if navigating away
         };
     }, []);
 
     return (
         <>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            <h1>{scanResult ? `Scanned Result: ${scanResult}` : 'No result yet' 
-                }</h1>
-            <div id="reader" style={{ width: '100%', height: '100vh' }}></div>
+            <h1>{scanResult ? `Scanned Result: ${scanResult}` : 'No result yet'}</h1>
+
+            <div id={qrRegionId} style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }}></div>
+
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                {!isScanning ? (
+                    <button onClick={startScanner}>Start Scanning</button>
+                ) : (
+                    <button onClick={stopScanner}>Stop Scanning</button>
+                )}
+            </div>
         </>
     );
 }
