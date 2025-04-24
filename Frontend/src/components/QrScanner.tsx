@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { Box, Typography, Button, Alert, Paper } from '@mui/material';
 
 export function QrScanner() {
     const [scanResult, setScanResult] = useState<string | null>(null);
@@ -7,6 +8,11 @@ export function QrScanner() {
     const [isScanning, setIsScanning] = useState(false);
     const scannerRef = useRef<Html5Qrcode | null>(null);
     const qrRegionId = 'qr-reader';
+
+    const isValidEmail = (text: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(text);
+    };
 
     const startScanner = async () => {
         try {
@@ -29,8 +35,15 @@ export function QrScanner() {
                 },
                 (decodedText) => {
                     console.log("Scanned:", decodedText);
+
+                    if (!decodedText || !isValidEmail(decodedText)) {
+                        setError("This QR code is invalid or has expired. Please try again or generate a new one.");
+                        stopScanner();
+                        return;
+                    }
+
                     setScanResult(decodedText);
-                    stopScanner(); // stop after success
+                    stopScanner();
                 },
                 (errorMessage) => {
                     console.warn("Scan error:", errorMessage);
@@ -56,24 +69,35 @@ export function QrScanner() {
 
     useEffect(() => {
         return () => {
-            stopScanner(); // clean up if navigating away
+            stopScanner();
         };
     }, []);
 
     return (
-        <>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <h1>{scanResult ? `Scanned Result: ${scanResult}` : 'No result yet'}</h1>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, mt: 2 }}>
+            {error && (
+                <Alert severity="error" sx={{ width: '100%', maxWidth: 500 }}>{error}</Alert>
+            )}
 
-            <div id={qrRegionId} style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }}></div>
+            <Typography variant="h5" fontWeight="bold" textAlign="center">
+                {scanResult ? `Scanned Result: ${scanResult}` : 'No result yet'}
+            </Typography>
 
-            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-                {!isScanning ? (
-                    <button onClick={startScanner}>Start Scanning</button>
-                ) : (
-                    <button onClick={stopScanner}>Stop Scanning</button>
-                )}
-            </div>
-        </>
+            <Paper elevation={3} sx={{ p: 2, border: '2px solid black', backgroundColor: '#fafafa', maxWidth: 520, width: '100%' }}>
+                <div
+                    id={qrRegionId}
+                    style={{ width: 500, height: 400, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                ></div>
+            </Paper>
+
+            <Button
+                variant="contained"
+                color={isScanning ? 'error' : 'primary'}
+                onClick={isScanning ? stopScanner : startScanner}
+                sx={{ width: 200 }}
+            >
+                {isScanning ? 'Stop Scanning' : 'Start Scanning'}
+            </Button>
+        </Box>
     );
 }

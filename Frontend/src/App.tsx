@@ -13,6 +13,7 @@ import { QrScannerPage } from './QrScannerPage.tsx';
 import { store } from './app/store';
 import { Login } from './Login.tsx';
 import { Home } from './Home.tsx';
+import { Logs } from './Logs.tsx';
 
 // --- Import your NavBar component ---
 import NavBar from './components/NavBar'; // Adjust path if NavBar.tsx is elsewhere (e.g., './NavBar.tsx')
@@ -33,6 +34,7 @@ function Layout() {
         {/* The Login route uses the root path */}
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/logs" element={<Logs />} />
         {/* Add any other routes here */}
       </Routes>
     </>
