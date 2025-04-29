@@ -1,63 +1,126 @@
 import * as React from 'react';
 import NavBar from './components/NavBar';
-import { Box, Typography, Divider, useTheme, Grid, IconButton } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Divider,
+  useTheme,
+  Grid,
+  IconButton,
+  Button,
+  Paper,
+  TextField
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 
 export function Home() {
-    const theme = useTheme(); // Access the Material-UI theme
+  const theme = useTheme();
+  const [rooms, setRooms] = React.useState([
+    { id: 1, name: 'Room A' },
+    { id: 2, name: 'Room B' },
+    { id: 3, name: 'Room C' },
+  ]);
 
-    // Example room data
-    const rooms = [
-        { id: 1, name: 'Room A' },
-        { id: 2, name: 'Room B' },
-        { id: 3, name: 'Room C' },
-    ];
+  const [archivedRooms, setArchivedRooms] = React.useState([
+    { id: 4, name: 'Archived A' },
+    { id: 5, name: 'Archived B' },
+    { id: 6, name: 'Archived C' },
+    { id: 7, name: 'Archived D' },
+    { id: 8, name: 'Archived E' },
+  ]);
 
-    return (
-        <>
-            <NavBar />
-            <Box 
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    marginTop: 4,
-                }}
-            >
-                <Typography variant="h5" gutterBottom>
-                    Home
-                </Typography>
-                <Divider 
-                    sx={{ 
-                        marginTop: 2, 
-                        marginBottom: 4, 
-                        backgroundColor: theme.palette.primary.main, 
-                        height: '2px', 
-                        width: '80%' 
-                    }} 
-                />
-                <Grid container spacing={2} justifyContent="center">
-                    {rooms.map((room) => (
-                        <Grid item xs={12} key={room.id}>
-                            <Box 
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <IconButton 
-                                    color="primary" 
-                                    sx={{ fontSize: 48 }}
-                                >
-                                    <MeetingRoomIcon fontSize="inherit" />
-                                </IconButton>
-                                <Typography variant="body1">{room.name}</Typography>
-                            </Box>
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
-        </>
+  const [showArchived, setShowArchived] = React.useState(false);
+  const [visibleArchivedCount, setVisibleArchivedCount] = React.useState(3);
+  const [newRoomName, setNewRoomName] = React.useState('');
+
+  const handleAddRoom = () => {
+    if (newRoomName.trim() === '') return;
+    const newRoom = { id: Date.now(), name: newRoomName.trim() };
+    setRooms([...rooms, newRoom]);
+    setNewRoomName('');
+  };
+
+  const handleRoomNameChange = (id, newName) => {
+    setRooms((prevRooms) =>
+      prevRooms.map((room) => (room.id === id ? { ...room, name: newName } : room))
     );
+  };
+
+  const handleSeeMoreArchived = () => {
+    setVisibleArchivedCount((prev) => prev + 3);
+  };
+
+  return (
+    <>
+      <NavBar />
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Your Rooms
+        </Typography>
+        <Divider sx={{ my: 2, bgcolor: theme.palette.primary.main, height: '2px', width: '80%' }} />
+
+        {/* Room grid */}
+        <Grid container spacing={2} justifyContent="center">
+          {/* First Room Card with create option */}
+          <Grid item>
+            <Paper sx={{ p: 2, width: 150, height: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <TextField
+                value={newRoomName}
+                onChange={(e) => setNewRoomName(e.target.value)}
+                placeholder="New Room Name"
+                size="small"
+                fullWidth
+                sx={{ mb: 1 }}
+              />
+              <IconButton color="primary" onClick={handleAddRoom}>
+                <AddIcon />
+              </IconButton>
+            </Paper>
+          </Grid>
+
+          {/* Render rooms */}
+          {rooms.map((room) => (
+            <Grid item key={room.id}>
+              <Paper sx={{ p: 2, width: 150, height: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <MeetingRoomIcon color="primary" fontSize="large" />
+                <TextField
+                  value={room.name}
+                  onChange={(e) => handleRoomNameChange(room.id, e.target.value)}
+                  size="small"
+                  variant="standard"
+                  sx={{ mt: 1, textAlign: 'center' }}
+                />
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* Archived Rooms Toggle */}
+        <Button onClick={() => setShowArchived(!showArchived)} sx={{ mt: 3 }} variant="contained">
+          Archived Rooms
+        </Button>
+
+        {showArchived && (
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
+            <Grid container spacing={2} justifyContent="center">
+              {archivedRooms.slice(0, visibleArchivedCount).map((room) => (
+                <Grid item key={room.id}>
+                  <Paper sx={{ p: 2, width: 120, height: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <MeetingRoomIcon color="action" fontSize="large" />
+                    <Typography variant="body2" mt={1}>{room.name}</Typography>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+            {archivedRooms.length > visibleArchivedCount && (
+              <Button onClick={handleSeeMoreArchived} sx={{ mt: 3 }} variant="outlined">
+                See More Rooms
+              </Button>
+            )}
+          </Box>
+        )}
+      </Box>
+    </>
+  );
 }
