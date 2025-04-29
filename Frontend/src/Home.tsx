@@ -41,7 +41,7 @@ export function Home() {
     setNewRoomName('');
   };
 
-  const handleRoomNameChange = (id, newName) => {
+  const handleRoomNameChange = (id: number, newName: string) => {
     setRooms((prevRooms) =>
       prevRooms.map((room) => (room.id === id ? { ...room, name: newName } : room))
     );
@@ -63,7 +63,7 @@ export function Home() {
         {/* Room grid */}
         <Grid container spacing={2} justifyContent="center">
           {/* First Room Card with create option */}
-          <Grid item>
+          <Grid>
             <Paper sx={{ p: 2, width: 150, height: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <TextField
                 value={newRoomName}
@@ -81,7 +81,7 @@ export function Home() {
 
           {/* Render rooms */}
           {rooms.map((room) => (
-            <Grid item key={room.id}>
+            <Grid>
               <Paper sx={{ p: 2, width: 150, height: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <MeetingRoomIcon color="primary" fontSize="large" />
                 <TextField
@@ -105,7 +105,7 @@ export function Home() {
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
             <Grid container spacing={2} justifyContent="center">
               {archivedRooms.slice(0, visibleArchivedCount).map((room) => (
-                <Grid item key={room.id}>
+                <Grid>
                   <Paper sx={{ p: 2, width: 120, height: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <MeetingRoomIcon color="action" fontSize="large" />
                     <Typography variant="body2" mt={1}>{room.name}</Typography>

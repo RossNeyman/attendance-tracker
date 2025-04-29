@@ -20,6 +20,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom'; // <--- Import useNavigate
+import {login} from './auth/login'; 
 
 // Optional: Add Google Font link for Bebas Neue/Agbalumo in public/index.html
 // <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -84,12 +85,14 @@ export function Login() {
     setStayLoggedIn(event.target.checked);
   };
 
-  const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    console.log('Attempting login with:', { username, password, stayLoggedIn });
-    alert(`Logging in with User ID: ${username}`);
-    // --- !!! --- On successful login, navigate to home --- !!! ---
-    // navigate('/home'); // <<< UNCOMMENT THIS LINE FOR REAL LOGIN
+  const handleLogin = async () => {
+    try {
+      const user = await login(username, password);
+      console.log('Logged in user:', user);
+      alert('Login successful!');
+    } catch (error) {
+      alert('Login failed. Please try again.');
+    }
   };
 
   // --- NEW --- Handler for the test navigation button
@@ -179,7 +182,7 @@ export function Login() {
             {/* Login Form Box */}
             <Box
               component="form"
-              onSubmit={handleLoginSubmit}
+              onSubmit={handleLogin}
               sx={{ width: '100%', maxWidth: '400px' }}
             >
               <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, borderRadius: '8px' }}>
