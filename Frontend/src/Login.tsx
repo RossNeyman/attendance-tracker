@@ -19,26 +19,18 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useNavigate } from 'react-router-dom'; // <--- Import useNavigate
-import {login} from './auth/login'; 
-
-// Optional: Add Google Font link for Bebas Neue/Agbalumo in public/index.html
-// <link rel="preconnect" href="https://fonts.googleapis.com">
-// <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-// <link href="https://fonts.googleapis.com/css2?family=Agbalumo&family=Bebas+Neue&display=swap" rel="stylesheet">
+import { useNavigate } from 'react-router-dom';
+import { login } from './auth/login';
 
 export function Login() {
-  // --- Hooks ---
-  const navigate = useNavigate(); // <--- Get the navigate function
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [scannerCode, setScannerCode] = useState<string>('');
   const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false);
 
-  // --- Event Handlers ---
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -60,25 +52,15 @@ export function Login() {
     event.preventDefault();
   };
 
-  const handleNewCodeClick = (): void => {
-    alert('New scanner code has been sent to your device');
-  };
-
   const handleForgotLinkClick = (event: React.MouseEvent<HTMLAnchorElement>): void => {
     event.preventDefault();
     alert('Navigating to password recovery page');
-    // navigate('/forgot-password'); // Example navigation
   };
 
   const handleCreateAccountClick = (event: React.MouseEvent<HTMLAnchorElement>): void => {
     event.preventDefault();
     alert('Navigating to account creation page');
-    // navigate('/register'); // Example navigation
-  };
-
-  const handleScannerCodeChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    const value = event.target.value.replace(/[^0-9]/g, '').slice(0, 6);
-    setScannerCode(value);
+    navigate('/signup');
   };
 
   const handleStayLoggedInChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -90,14 +72,10 @@ export function Login() {
       const user = await login(username, password);
       console.log('Logged in user:', user);
       alert('Login successful!');
+      navigate('/home');
     } catch (error) {
-      alert('Login failed. Please try again.');
+      alert('Login failed. Please try again.' + error);
     }
-  };
-
-  // --- NEW --- Handler for the test navigation button
-  const handleGoToHomeTest = () => {
-    navigate('/home'); // Navigate to the '/home' route
   };
 
   return (
@@ -105,17 +83,16 @@ export function Login() {
       <CssBaseline />
       <GlobalStyles styles={{ body: { fontFamily: 'Arial, sans-serif' } }} />
 
-      <Box sx={{
-        minHeight: '100vh',
-        backgroundColor: '#f5f5f5',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
+      <Box
+        sx={{
+          minHeight: '100vh',
+          backgroundColor: '#f5f5f5',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
       >
-        {/* Hamburger Menu (Consider if needed on Login page) */}
         <Box sx={{ position: 'absolute', top: 15, left: 15, zIndex: 1100 }}>
-           {/* ... Hamburger Menu code ... */}
-           <IconButton
+          <IconButton
             id="hamburgerMenu"
             aria-controls={open ? 'basic-menu' : undefined}
             aria-haspopup="true"
@@ -135,9 +112,15 @@ export function Login() {
             }}
             sx={{ mt: '5px' }}
           >
-            <MenuItem onClick={() => handleMenuItemClick('Navigating to Register page')}>Register</MenuItem>
-            <MenuItem onClick={() => handleMenuItemClick('Navigating to Student Login page')}>Student Login</MenuItem>
-            <MenuItem onClick={() => handleMenuItemClick('Navigating to Scanner page')}>Scanner</MenuItem>
+            <MenuItem onClick={() => handleMenuItemClick('Navigating to Register page')}>
+              Register
+            </MenuItem>
+            <MenuItem onClick={() => handleMenuItemClick('Navigating to Student Login page')}>
+              Student Login
+            </MenuItem>
+            <MenuItem onClick={() => handleMenuItemClick('Navigating to Scanner page')}>
+              Scanner
+            </MenuItem>
             <MenuItem onClick={() => handleMenuItemClick('Logging out...')}>Log Out</MenuItem>
           </Menu>
         </Box>
@@ -153,15 +136,15 @@ export function Login() {
             py: 4,
           }}
         >
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-          }}>
-
-            {/* Logo */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
             <Typography
               variant="h1"
               component="div"
@@ -179,17 +162,15 @@ export function Login() {
               <span style={{ color: '#2374cb' }}>TAP</span>
             </Typography>
 
-            {/* Login Form Box */}
-            <Box
-              component="form"
-              onSubmit={handleLogin}
-              sx={{ width: '100%', maxWidth: '400px' }}
-            >
+            <Box sx={{ width: '100%', maxWidth: '400px' }}>
               <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, borderRadius: '8px' }}>
-                {/* User ID */}
                 <Box sx={{ mb: 2 }}>
-                   {/* ... User ID field ... */}
-                   <Typography variant="body1" component="label" htmlFor="username" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
+                  <Typography
+                    variant="body1"
+                    component="label"
+                    htmlFor="username"
+                    sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}
+                  >
                     User ID:
                   </Typography>
                   <TextField
@@ -204,44 +185,57 @@ export function Login() {
                   />
                 </Box>
 
-                {/* Password */}
                 <Box sx={{ mb: 2 }}>
-                    {/* ... Password field ... */}
-                    <Typography variant="body1" component="label" htmlFor="password" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
-                      Password:
-                    </Typography>
-                    <TextField
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      autoComplete="current-password"
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={handleTogglePasswordVisibility}
-                              onMouseDown={handleMouseDownPassword}
-                              edge="end"
-                              size="small"
-                            >
-                              {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
+                  <Typography
+                    variant="body1"
+                    component="label"
+                    htmlFor="password"
+                    sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}
+                  >
+                    Password:
+                  </Typography>
+                  <TextField
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleTogglePasswordVisibility}
+                            onMouseDown={handleMouseDownPassword}
+                            edge="end"
+                            size="small"
+                          >
+                            {showPassword ? (
+                              <VisibilityOff fontSize="small" />
+                            ) : (
+                              <Visibility fontSize="small" />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
                 </Box>
 
-                {/* Links Box */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px', mb: 2 }}>
-                   {/* ... Links ... */}
-                   <Link href="#" onClick={handleCreateAccountClick} underline="hover">
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    fontSize: '14px',
+                    mb: 2,
+                  }}
+                >
+                  <Link href="#" onClick={handleCreateAccountClick} underline="hover">
                     Create Account
                   </Link>
                   <Link href="#" onClick={handleForgotLinkClick} underline="hover">
@@ -249,42 +243,34 @@ export function Login() {
                   </Link>
                 </Box>
 
-                {/* Stay Logged In Checkbox */}
                 <FormControlLabel
-                  control={<Checkbox id="stayLoggedIn" checked={stayLoggedIn} onChange={handleStayLoggedInChange} size="small" />}
+                  control={
+                    <Checkbox
+                      id="stayLoggedIn"
+                      checked={stayLoggedIn}
+                      onChange={handleStayLoggedInChange}
+                      size="small"
+                    />
+                  }
                   label="Stay Logged-In Session?"
                   sx={{ display: 'block', mb: 3 }}
                 />
 
-                {/* Login Button */}
-                <Button type="submit" variant="contained" color="primary" fullWidth size="large" sx={{ py: 1.5, fontWeight: 'bold', textTransform: 'none' }}>
+                <Button
+                  onClick={handleLogin}
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  size="large"
+                  sx={{ py: 1.5, fontWeight: 'bold', textTransform: 'none' }}
+                >
                   Login
                 </Button>
-
-                {/* --- START: TEST NAVIGATION BUTTON --- */}
-                <Button
-                  variant="outlined" // Different style to distinguish it
-                  color="secondary"  // Different color
-                  fullWidth
-                  size="small"
-                  onClick={handleGoToHomeTest} // Use the new handler
-                  sx={{ mt: 2 }} // Add margin top for spacing
-                >
-                  (Test) Go to Home Page
-                </Button>
-                {/* --- END: TEST NAVIGATION BUTTON --- */}
-
               </Paper>
             </Box>
-
-            {/* Scanner Section (Commented Out) */}
-            {/* ... */}
-
           </Box>
         </Container>
       </Box>
     </>
   );
 }
-
-// export default Login; // Uncomment if needed
