@@ -13,10 +13,10 @@ import {
   GlobalStyles,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import {signup} from './auth/login'
 
 export function Signup() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -29,9 +29,7 @@ export function Signup() {
       return;
     }
     try {
-      // Replace with your signup logic
-      console.log('Signing up user:', { username, email, password });
-      alert('Signup successful!');
+      const user = await signup(email, password);
       navigate('/home'); // Navigate to the home page after signup
     } catch (error) {
       alert('Signup failed. Please try again.');
@@ -101,28 +99,7 @@ export function Signup() {
               sx={{ width: '100%', maxWidth: '400px' }}
             >
               <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, borderRadius: '8px' }}>
-                {/* Username */}
-                <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="body1"
-                    component="label"
-                    htmlFor="username"
-                    sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}
-                  >
-                    Username:
-                  </Typography>
-                  <TextField
-                    id="username"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </Box>
-
-                {/* Email */}
+                 {/* Email */}
                 <Box sx={{ mb: 2 }}>
                   <Typography
                     variant="body1"
