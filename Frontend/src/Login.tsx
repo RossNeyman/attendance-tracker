@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useState } from 'react';
 import {
   Box,
   Container,
@@ -24,14 +25,14 @@ import { login } from './auth/login';
 
 export function Login() {
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false);
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMenuClick: (event: React.MouseEvent<HTMLButtonElement>) => void = (event) => {
     setAnchorEl(event.currentTarget);
   };
 

@@ -1,10 +1,8 @@
-import { useState } from 'react';
 import { Provider } from 'react-redux';
 import {
   BrowserRouter as Router,
   Route,
-  Routes,
-  useLocation // Import useLocation
+  // Import useLocation
 } from 'react-router-dom';
 // import reactLogo from './assets/react.svg' // Currently unused
 // import viteLogo from '/vite.svg'      // Currently unused
@@ -13,16 +11,14 @@ import { QrScannerPage } from './QrScannerPage.tsx';
 import { store } from './app/store';
 import { Login } from './Login.tsx';
 import { Home } from './Home.tsx';
-import { Logs } from './Logs.tsx';
 import { Signup } from './Signup.tsx';
 
-// --- Import your NavBar component ---
-import NavBar from './components/NavBar'; // Adjust path if NavBar.tsx is elsewhere (e.g., './NavBar.tsx')
+
 
 // --- Create a Layout component to manage NavBar visibility ---
 function Layout() {
-  const location = useLocation(); // Get the current location object
-  const showNavBar = location.pathname !== '/'; // Show NavBar if path is NOT the root '/' (which is your Login page)
+ // const location = useLocation(); // Get the current location object
+ // const showNavBar = location.pathname !== '/'; // Show NavBar if path is NOT the root '/' (which is your Login page)
 
   return (
     <>
@@ -30,15 +26,14 @@ function Layout() {
       
 
       {/* Define the routes where the page content will be rendered */}
-      <Routes>
+      <Router>
         <Route path="/scanner" element={<QrScannerPage />} />
         {/* The Login route uses the root path */}
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/logs" element={<Logs />} />
         {/* Add any other routes here */}
-      </Routes>
+      </Router>
     </>
   );
 }
