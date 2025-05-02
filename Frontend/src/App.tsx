@@ -24,10 +24,10 @@ import { Signup } from './Signup.tsx';
 //   return (
 //     <>
 //       {/* Conditionally render the NavBar */}
-      
+
 
 //       {/* Define the routes where the page content will be rendered */}
-      
+
 //     </>
 //   );
 // }
@@ -42,13 +42,13 @@ function App() {
       <Router>
         {/* Render the Layout component which handles NavBar and Routes */}
         <Routes>
-        <Route path="/scanner" element={<QrScannerPage />} />
-        {/* The Login route uses the root path */}
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<Home />} />
-        {/* Add any other routes here */}
-      </Routes>
+          <Route path="/scanner" element={<QrScannerPage />} />
+          {/* The Login route uses the root path */}
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/home" element={<Home />} />
+          {/* Add any other routes here */}
+        </Routes>
       </Router>
     </Provider>
   )
