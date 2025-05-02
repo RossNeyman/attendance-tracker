@@ -7,8 +7,6 @@ import {
   TextField,
   Button,
   IconButton,
-  Menu,
-  MenuItem,
   Checkbox,
   FormControlLabel,
   InputAdornment,
@@ -17,7 +15,6 @@ import {
   CssBaseline,
   GlobalStyles,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
@@ -25,25 +22,10 @@ import { login } from './auth/login';
 
 export function Login() {
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false);
-
-  const handleMenuClick: (event: React.MouseEvent<HTMLButtonElement>) => void = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = (): void => {
-    setAnchorEl(null);
-  };
-
-  const handleMenuItemClick = (message: string): void => {
-    alert(message);
-    handleMenuClose();
-  };
 
   const handleTogglePasswordVisibility = (): void => {
     setShowPassword(!showPassword);
@@ -55,7 +37,7 @@ export function Login() {
 
   const handleForgotLinkClick = (event: React.MouseEvent<HTMLAnchorElement>): void => {
     event.preventDefault();
-    alert('Navigating to password recovery page');
+    navigate('/forgot-password');
   };
 
   const handleCreateAccountClick = (event: React.MouseEvent<HTMLAnchorElement>): void => {

@@ -10,12 +10,14 @@ import { store } from './app/store';
 import { Login } from './Login.tsx';
 import { Home } from './Home.tsx';
 import { Signup } from './Signup.tsx';
+import { ForgotPassword } from './forgotPassword.tsx';
 
 function App() {
   return (
     <Provider store={store}>
       <Router>
         <Routes>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/scanner" element={<QrScannerPage />} />
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
