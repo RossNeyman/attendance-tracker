@@ -29,9 +29,6 @@ export function QrScannerPage() {
 
   return (
     <>
-      {/* 1. Render NavBar at the top */}
-      <NavBar />
-
       {/* Use Container for consistent padding and max-width */}
       <Container maxWidth="md" sx={{ mt: 2, mb: 4 }}>
         {/* 2. Exit Button Area */}
