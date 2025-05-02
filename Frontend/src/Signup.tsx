@@ -29,7 +29,7 @@ export function Signup() {
       return;
     }
     try {
-      const user = await signup(email, password);
+      await signup(email, password);
       navigate('/home'); // Navigate to the home page after signup
     } catch (error) {
       alert('Signup failed. Please try again.');

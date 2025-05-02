@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import NavBar from './components/NavBar';
 import {
   Box,
@@ -16,13 +16,13 @@ import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 
 export function Home() {
   const theme = useTheme();
-  const [rooms, setRooms] = React.useState([
+  const [rooms, setRooms] = useState([
     { id: 1, name: 'Room A' },
     { id: 2, name: 'Room B' },
     { id: 3, name: 'Room C' },
   ]);
 
-  const [archivedRooms, setArchivedRooms] = React.useState([
+  const [archivedRooms, _setArchivedRooms] = useState([
     { id: 4, name: 'Archived A' },
     { id: 5, name: 'Archived B' },
     { id: 6, name: 'Archived C' },
@@ -30,9 +30,9 @@ export function Home() {
     { id: 8, name: 'Archived E' },
   ]);
 
-  const [showArchived, setShowArchived] = React.useState(false);
-  const [visibleArchivedCount, setVisibleArchivedCount] = React.useState(3);
-  const [newRoomName, setNewRoomName] = React.useState('');
+  const [showArchived, setShowArchived] = useState(false);
+  const [visibleArchivedCount, setVisibleArchivedCount] = useState(3);
+  const [newRoomName, setNewRoomName] = useState('');
 
   const handleAddRoom = () => {
     if (newRoomName.trim() === '') return;
@@ -42,13 +42,13 @@ export function Home() {
   };
 
   const handleRoomNameChange = (id: number, newName: string) => {
-    setRooms((prevRooms) =>
+    setRooms((prevRooms: { id: number; name: string; }[]) =>
       prevRooms.map((room) => (room.id === id ? { ...room, name: newName } : room))
     );
   };
 
   const handleSeeMoreArchived = () => {
-    setVisibleArchivedCount((prev) => prev + 3);
+    setVisibleArchivedCount((prev: number) => prev + 3);
   };
 
   return (
@@ -67,7 +67,7 @@ export function Home() {
             <Paper sx={{ p: 2, width: 150, height: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <TextField
                 value={newRoomName}
-                onChange={(e) => setNewRoomName(e.target.value)}
+                onChange={(e: { target: { value: any; }; }) => setNewRoomName(e.target.value)}
                 placeholder="New Room Name"
                 size="small"
                 fullWidth
@@ -80,13 +80,13 @@ export function Home() {
           </Grid>
 
           {/* Render rooms */}
-          {rooms.map((room) => (
+          {rooms.map((room: { name: any; id: number; }) => (
             <Grid>
               <Paper sx={{ p: 2, width: 150, height: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <MeetingRoomIcon color="primary" fontSize="large" />
                 <TextField
                   value={room.name}
-                  onChange={(e) => handleRoomNameChange(room.id, e.target.value)}
+                  onChange={(e: { target: { value: string; }; }) => handleRoomNameChange(room.id, e.target.value)}
                   size="small"
                   variant="standard"
                   sx={{ mt: 1, textAlign: 'center' }}
@@ -104,7 +104,7 @@ export function Home() {
         {showArchived && (
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
             <Grid container spacing={2} justifyContent="center">
-              {archivedRooms.slice(0, visibleArchivedCount).map((room) => (
+              {archivedRooms.slice(0, visibleArchivedCount).map((room: { name: any; }) => (
                 <Grid>
                   <Paper sx={{ p: 2, width: 120, height: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <MeetingRoomIcon color="action" fontSize="large" />
