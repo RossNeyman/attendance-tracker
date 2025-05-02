@@ -1,15 +1,21 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  root: '.', // Keep the root as the Frontend directory
+  root: '.', // Root remains the Frontend directory
   publicDir: '../public', // Specify the public directory for static assets
   build: {
     outDir: '../dist', // Output directory for the build
     emptyOutDir: true, // Clear the output directory before building
     rollupOptions: {
-      input: '../public/index.html', // Specify the location of the index.html file
+      input: './index.html', // Use a relative path to the index.html file
+    },
+  },
+  resolve: {
+    alias: {
+      crypto: resolve(__dirname, 'node_modules/crypto-browserify'), // Polyfill for crypto
     },
   },
   server: {
