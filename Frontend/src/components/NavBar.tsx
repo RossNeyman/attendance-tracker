@@ -34,19 +34,18 @@ const NavBar: React.FC = () => {
                 <Toolbar
                     disableGutters
                     sx={{
-                        justifyContent: 'center', // <<< Center the content (logo)
+                        justifyContent: 'center', 
                     }}
                 >
                     {/* Logo */}
                     <Typography
-                        variant="h4" // <<< Made logo bigger (was h5)
+                        variant="h4" 
                         component={Link}
                         to="/home"
                         sx={{
                             fontFamily: '"Agbalumo", cursive',
                             fontWeight: 'normal',
                             textDecoration: 'none',
-                            // flexGrow: 1, // <<< Removed flexGrow
                         }}
                     >
                         <span style={{ color: '#cb2323' }}>Class</span>
