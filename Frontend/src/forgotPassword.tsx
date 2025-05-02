@@ -10,16 +10,26 @@ import {
   GlobalStyles,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 
 export function ForgotPassword() {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [message, setMessage] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Simulate sending a password reset request
-    setMessage('If this email is registered, a password reset link will be sent.');
+    const auth = getAuth();
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setMessage('A password reset link has been sent to your email.');
+      setError('');
+    } catch (err: any) {
+      setError(err.message || 'Failed to send reset link. Please try again.');
+      setMessage('');
+    }
   };
 
   const handleBackToLogin = () => {
@@ -153,17 +163,31 @@ export function ForgotPassword() {
                   Back to Login
                 </Button>
 
-                {/* Message */}
+                {/* Success Message */}
                 {message && (
                   <Typography
                     variant="body2"
                     sx={{
                       mt: 2,
                       textAlign: 'center',
-                      color: 'text.secondary',
+                      color: 'green',
                     }}
                   >
                     {message}
+                  </Typography>
+                )}
+
+                {/* Error Message */}
+                {error && (
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mt: 2,
+                      textAlign: 'center',
+                      color: 'red',
+                    }}
+                  >
+                    {error}
                   </Typography>
                 )}
               </Paper>
