@@ -8,25 +8,16 @@ import {
   TextField,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-// --- Import your NavBar component ---
-import NavBar from "./components/NavBar"; // Adjust path if necessary
-
-// --- Import your QrScanner component ---
-// This component currently renders the "Request Permissions" UI based on your image
+import NavBar from "./components/NavBar";
 import { QrScanner } from "./components/QrScanner";
 
 export function QrScannerPage() {
   const navigate = useNavigate();
-
-  // State for the QR Code Generation Form
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [csiEmail, setCsiEmail] = useState("");
 
-  // Handlers
   const handleExit = () => {
-    // Navigate somewhere appropriate, e.g., back to Home
     navigate("/");
   };
 
