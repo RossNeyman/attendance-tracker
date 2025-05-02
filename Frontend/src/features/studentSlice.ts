@@ -5,7 +5,6 @@ interface Student {
     last_name: string;
     cix_email: string;
     qr_code: string;
-  //  [key: string]: any;
 }
 
 interface ApiResponse {
@@ -41,7 +40,6 @@ export const studentSlice = createApi({
     })
 });
 
-// Export the generated hooks
 export const { 
     useGetDataQuery,
     useUpdateStudentMutation,
