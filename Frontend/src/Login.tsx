@@ -92,40 +92,7 @@ export function Login() {
           flexDirection: 'column',
         }}
       >
-        <Box sx={{ position: 'absolute', top: 15, left: 15, zIndex: 1100 }}>
-          <IconButton
-            id="hamburgerMenu"
-            aria-controls={open ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-            onClick={handleMenuClick}
-            sx={{ fontSize: '50px', padding: '5px' }}
-          >
-            <MenuIcon fontSize="inherit" />
-          </IconButton>
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleMenuClose}
-            MenuListProps={{
-              'aria-labelledby': 'hamburgerMenu',
-            }}
-            sx={{ mt: '5px' }}
-          >
-            <MenuItem onClick={() => handleMenuItemClick('Navigating to Register page')}>
-              Register
-            </MenuItem>
-            <MenuItem onClick={() => handleMenuItemClick('Navigating to Student Login page')}>
-              Student Login
-            </MenuItem>
-            <MenuItem onClick={() => handleMenuItemClick('Navigating to Scanner page')}>
-              Scanner
-            </MenuItem>
-            <MenuItem onClick={() => handleMenuItemClick('Logging out...')}>Log Out</MenuItem>
-          </Menu>
-        </Box>
-
+        
         <Container
           maxWidth="sm"
           sx={{
