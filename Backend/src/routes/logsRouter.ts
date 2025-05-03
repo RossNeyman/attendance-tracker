@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import db from "../db";
+import { doc, setDoc, collection, addDoc } from "firebase/firestore";
 
 const logsRouter = express.Router();
 
@@ -12,16 +13,23 @@ logsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
             return res.status(400).json({ error: "Missing required parameters." });
         }
 
-        const attendanceRef = db
-            .collection("users")
-            .doc(userId as string)
-            .collection("rooms")
-            .doc(roomId as string)
-            .collection("attendanceLogs")
-            .doc(weekId as string)
-            .collection("logs");
+        const mainRef = db.collection("/Users");
 
-        await attendanceRef.add({
+        if(await (await mainRef.where("Document ID", "==", userId).get()).empty) {
+            mainRef.doc(userId as string).set({});
+        }
+
+        const userDocRef = mainRef.doc(userId as string);
+        const roomDocRef = doc(collection(userDocRef, "rooms"), roomId as string);
+        const weekDocRef = doc(collection(roomDocRef, "attendance_logs"), weekId as string);
+
+        await setDoc(userDocRef, {}, { merge: true });
+        await setDoc(roomDocRef, {}, { merge: true });
+        await setDoc(weekDocRef, {}, { merge: true });
+
+        const attendanceRef = collection(weekDocRef, "logs");
+
+        await addDoc(attendanceRef, {
             email,
             timestamp: new Date(),
         });
