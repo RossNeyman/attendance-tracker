@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,12 +9,32 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { QrScanner } from "./components/QrScanner";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./config/firebaseConfig";
 
 export function QrScannerPage() {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [csiEmail, setCsiEmail] = useState("");
+  const [userId, setUserId] = useState<string | null>(null); 
+  const [roomId, _setRoomId] = useState("defaultRoomId");
+  const [weekId, setWeekId] = useState("");
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId(null); 
+        navigate("/login"); 
+      }
+    });
+
+    const currentWeekId = `week-${new Date().toISOString().slice(0, 10)}`;
+    setWeekId(currentWeekId);
+    return () => unsubscribe(); 
+  }, [navigate]);
 
   const handleExit = () => {
     navigate("/");
@@ -67,9 +87,10 @@ export function QrScannerPage() {
               p: 2, // Add some padding inside the border
             }}
           >
-            {/* Render the QrScanner component HERE */}
-            {/* Its content (permission request) will appear inside this box */}
-            <QrScanner />
+            {/* Pass userId, roomId, and weekId as props to QrScanner */}
+            {userId && weekId && (
+              <QrScanner userId={userId} roomId={roomId} weekId={weekId} />
+            )}
           </Box>
           <Typography
             variant="subtitle1"
@@ -90,7 +111,6 @@ export function QrScannerPage() {
               textAlign: "center",
               fontWeight: "BOLD",
               fontFamily: '"Special Gothic", san-serif',
-
             }}
           >
             Don't have a QR code yet? ..... Make One!
