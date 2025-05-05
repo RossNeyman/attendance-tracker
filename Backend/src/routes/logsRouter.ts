@@ -4,37 +4,31 @@ import { doc, setDoc, collection, addDoc, where } from "firebase/firestore";
 
 const logsRouter = express.Router();
 
-// logsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
-//     try {
-//         const { userId, roomId, weekId } = req.query;
-//         const { email } = req.body;
+logsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { userId, roomId, weekId } = req.query;
+        const { email } = req.body;
 
-//         if (!userId || !roomId || !weekId || !email) {
-//             return res.status(400).json({ error: "Missing required parameters." });
-//         }
+        if (!userId || !roomId || !weekId || !email) {
+            return res.status(400).json({ error: "Missing required parameters." });
+        }
 
-//         const userDocRef = db.collection("/Users").doc(userId as string);
-//         const roomDocRef = userDocRef.collection("rooms").doc(roomId as string);
-//         const weekDocRef = roomDocRef.collection("attendance_logs").doc(weekId as string);
+        const weeksRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomId as string).collection("weeks");
 
-//         await setDoc(userDocRef, {}, { merge: true });
-//         await setDoc(roomDocRef, {}, { merge: true });
-//         await setDoc(weekDocRef, {}, { merge: true });
+        if(!await weeksRef.where("week_id", "==", weekId as string).get()) {
+            weeksRef.doc(weekId as string).set({ logs: [] });
+        }
 
-
-//         const attendanceRef = collection(weekDocRef, "logs");
-
-//         await addDoc(attendanceRef, {
-//             email,
-//             timestamp: new Date(),
-//         });
-
-//         res.status(200).json({ message: "Attendance logged successfully." });
-//     } catch (error) {
-//         console.error("Error logging attendance:", error);
-//         res.status(500).json({ error: "Internal server error." });
-//     }
-// });
+        await weeksRef.doc(weekId as string).collection("logs").add({
+            email: email,
+            timestamp: new Date().toISOString(),
+        });
+        res.status(200).json({ message: "Attendance logged successfully." });
+    } catch (error) {
+        console.error("Error logging attendance:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
 
 logsRouter.put('/', async (req: Request, res: Response): Promise<any> => {
     try {
@@ -64,7 +58,7 @@ logsRouter.put('/rooms', async (req: Request, res: Response): Promise<any> => {
         }
         const userDocRef = db.collection("/Users").doc(userId);
         const roomsRef = userDocRef.collection("rooms");
-        roomsRef.add({room_name: roomName, archived: false}).then(()=>{
+        (await roomsRef.add({room_name: roomName, archived: false, weeks: []})).set({}).then(()=>{
             return res.status(200).json({ message: "Room saved successfully." });
         })
 
