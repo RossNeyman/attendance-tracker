@@ -30,6 +30,38 @@ logsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     }
 });
 
+logsRouter.get('/', async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { userId, roomId, weekId } = req.query;
+        if (!userId || !roomId || !weekId) {
+            return res.status(400).json({ error: "Missing required parameters." });
+        }
+        const logsRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomId as string).collection("weeks").doc(weekId as string).collection("logs");
+        const snapshot = await logsRef.get();
+        const logs: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).json(logs);
+    } catch (error) {
+        console.error("Error fetching logs:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
+logsRouter.get('/weeks', async (req: Request, res: Response): Promise<any> => {
+    try { 
+        const { userId, roomId } = req.query;
+        if (!userId || !roomId) {
+            return res.status(400).json({ error: "Missing required parameters." });
+        }
+        const weeksRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomId as string).collection("weeks");
+        const snapshot = await weeksRef.get();
+        const weeks: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).json(weeks);
+    } catch (error) {
+        console.error("Error fetching weeks:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
 logsRouter.put('/', async (req: Request, res: Response): Promise<any> => {
     try {
         const {userId, first_name, last_name, email} = req.body;

@@ -7,6 +7,12 @@ export interface user {
   email: string;
 }
 
+export interface week {
+  userId: string;
+  roomId: string;
+  weekId: string;
+}
+
 export const logsSlice = createApi({
   reducerPath: 'logsApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/logs' }),
@@ -53,7 +59,14 @@ export const logsSlice = createApi({
         method: 'GET',
         params: { userId: userId },
       }),
-    })
+    }),
+    getRoomLogs: builder.query({
+      query: (week)=>({
+        url: `/`,
+        method: 'GET',
+        params: { weekId: week.weekId, roomId: week.roomId, userId: week.userId },
+      })
+  })
   })
 });
 
@@ -63,5 +76,6 @@ export const {
   useGetActiveRoomsQuery, 
   useGetArchivedRoomsQuery,
   useCreateRoomMutation,
-  useChangeRoomNameMutation
+  useChangeRoomNameMutation,
+  useGetRoomLogsQuery
 } = logsSlice;
