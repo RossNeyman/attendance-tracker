@@ -32,13 +32,13 @@ export function Home() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUserId(user.uid); // Set userId when the user is authenticated
+        setUserId(user.uid); 
       } else {
-        setUserId(null); // Handle unauthenticated state
+        setUserId(null); 
       }
     });
 
-    return () => unsubscribe(); // Cleanup the listener on unmount
+    return () => unsubscribe(); 
   }, []);
 
   const handleAddRoom = () => {
@@ -60,7 +60,7 @@ export function Home() {
   };
 
   if (userId === null) {
-    return <Typography>Loading user information...</Typography>; // Show a loading state while userId is being resolved
+    return <Typography>Loading user information...</Typography>; 
   }
 
   if (isLoading) {
