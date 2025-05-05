@@ -13,14 +13,18 @@ import {
   GlobalStyles,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import {signup} from './auth/login'
+import { useCreateUserMutation, user } from './features/logsSlice';
+import { signup } from './auth/login'
 
 export function Signup() {
   const navigate = useNavigate();
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false);
+  const [createUser] = useCreateUserMutation();
 
   const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -29,10 +33,18 @@ export function Signup() {
       return;
     }
     try {
-      await signup(email, password);
+      await signup(email, password).then((userCredential) => {
+        const user: user = {
+          userId: userCredential.uid,
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+        };
+        return createUser({user});
+      });
       navigate('/home');
     } catch (error) {
-      alert('Signup failed. Please try again.');
+      alert('Signup failed. Please try again.' + error);
     }
   };
 
@@ -99,7 +111,7 @@ export function Signup() {
               sx={{ width: '100%', maxWidth: '400px' }}
             >
               <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, borderRadius: '8px' }}>
-                 {/* Email */}
+                {/* Email */}
                 <Box sx={{ mb: 2 }}>
                   <Typography
                     variant="body1"
@@ -118,6 +130,50 @@ export function Signup() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Box>
+
+                {/* First Name */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography
+                    variant="body1"
+                    component="label"
+                    htmlFor="firstName"
+                    sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}
+                  >
+                    First Name:
+                  </Typography>
+                  <TextField
+                    id="firstName"
+                    type="text"
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    required
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </Box>
+
+                {/* Last Name */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography
+                    variant="body1"
+                    component="label"
+                    htmlFor="lastName"
+                    sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}
+                  >
+                    Last Name:
+                  </Typography>
+                  <TextField
+                    id="lastName"
+                    type="text"
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    required
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                   />
                 </Box>
 

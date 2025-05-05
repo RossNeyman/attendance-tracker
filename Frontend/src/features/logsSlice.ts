@@ -1,6 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const logsApi = createApi({
+export interface user {
+  userId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+}
+
+export const logsSlice = createApi({
   reducerPath: 'logsApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/logs' }),
   endpoints: (builder) => ({
@@ -12,7 +19,49 @@ export const logsApi = createApi({
         body: { email },
       }),
     }),
-  }),
+    createUser: builder.mutation({
+      query: ({ user }) => ({
+        url: `/`,
+        method: 'PUT',
+        body: user,
+      }),
+    }),
+    createRoom: builder.mutation({
+      query: ({ userId, roomName }) => ({
+        url: `/rooms`,
+        method: 'PUT',
+        body: { userId, roomName },
+      }),
+    }),
+    changeRoomName: builder.mutation({
+      query: ({ userId, roomName, newRoomName }) => ({
+        url: `/rooms`,
+        method: 'POST',
+        body: { userId, roomName, newRoomName },
+      }),
+    }),
+    getActiveRooms: builder.query({
+      query: (userId:string) => ({
+        url: `/rooms`,
+        method: 'GET',
+        params: { userId: userId },
+      }),
+    }),
+    getArchivedRooms: builder.query({
+      query: (userId:string) => ({
+        url: `/rooms`,
+        method: 'GET',
+        params: { userId: userId },
+      }),
+    })
+  })
 });
 
-export const { useLogAttendanceMutation } = logsApi;
+export const { 
+  useLogAttendanceMutation, 
+  useCreateUserMutation, 
+  useGetActiveRoomsQuery, 
+  useGetArchivedRoomsQuery,
+  useCreateRoomMutation,
+  useChangeRoomNameMutation
+} = logsSlice;
