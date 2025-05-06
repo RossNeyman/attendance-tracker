@@ -116,7 +116,12 @@ export function Home() {
   }
 
   if (userId === null) {
-    return <Typography>Loading user information...</Typography>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+        <Typography sx={{ ml: 2 }}>Loading user information...</Typography>
+      </Box>
+    );
   }
 
   if (error || isArchivedError || operationError) {
