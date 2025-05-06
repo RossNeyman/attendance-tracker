@@ -112,21 +112,21 @@ roomsRouter.put('/', async (req: Request, res: Response): Promise<any> => {
 
 /**
  * @swagger
- * * /rooms/:
- * *   post:
- * *     summary: Update the name of a room for a user
- *  *     description: This endpoint updates the name of a room for a user based on the userId, roomName, and newRoomName parameters.
- * *     responses:
- * *       200:
- * *         description: Successfully updated room name
- * *         content:
- * *           application/json:
- * *             schema:
- * *               type: object
- * *               example:
- * *                 message: "Room name updated successfully"
- * *       500:
- * *         description: Internal server error
+ *  /rooms/:
+ *    post:
+ *      summary: Update the name of a room for a user
+ *      description: This endpoint updates the name of a room for a user based on the userId, roomName, and newRoomName parameters.
+ *      responses:
+ *        200:
+ *          description: Successfully updated room name
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                example:
+ *                  message: "Room name updated successfully"
+ *        500:
+ *          description: Internal server error
  * */
 roomsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     try{
