@@ -1,101 +1,84 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Select, MenuItem, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-
-interface Log {
-    date: string;
-    attendees: string[];
-}
+import { Container, Typography, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Select } from '@mui/material';
+import { useGetRoomLogsQuery, useGetWeeksQuery } from './features/logsSlice';
+import NavBar from './components/NavBar';
 
 const Logs: React.FC = () => {
-    const { roomId } = useParams<{ roomId: string }>();
-    const [logs, setLogs] = useState<Log[]>([]);
+    const { roomId, userId } = useParams<{ roomId: string, userId: string }>();
     const [selectedWeek, setSelectedWeek] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true);
-    const [weeks, setWeeks] = useState<string[]>([]);
+    const { data: weeks, isLoading: isWeeksLoading, error: isWeeksError, isSuccess: isWeeksSuccess } = useGetWeeksQuery({ userId: userId, roomId: roomId });
+    const { data: logs, error, isLoading, refetch: setLogs } = useGetRoomLogsQuery({ userId: userId, roomId: roomId, weekId: selectedWeek });
 
     useEffect(() => {
-        const fetchWeeks = async () => {
-            try {
-                const response = await fetch(`/api/rooms/${roomId}/weeks`);
-                const data = await response.json();
-                setWeeks(data);
-                if (data.length > 0) {
-                    setSelectedWeek(data[0]);
-                }
-            } catch (error) {
-                console.error('Error fetching weeks:', error);
-            }
-        };
+        if (isWeeksSuccess) {
+            setSelectedWeek(weeks[weeks.length - 1].id);
+        }
+        setLogs();
+    }, [selectedWeek]);
 
-        fetchWeeks();
-    }, [roomId]);
+    useEffect(()=> {
+        if(error){
+            console.error("Error fetching logs:", error);
+            //Dog error component here
+        }
+        if(isWeeksError){
+            console.error("Error fetching weeks:", isWeeksError);
+            //Dog error component here
+        }
+    }, [error, isWeeksError])
 
-    useEffect(() => {
-        if (!selectedWeek) return;
-        const fetchLogs = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch(`/api/rooms/${roomId}/logs?week=${selectedWeek}`);
-                const data = await response.json();
-                setLogs(data);
-            } catch (error) {
-                console.error('Error fetching logs:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    if (isWeeksLoading) {
+        return <CircularProgress />;
+    }
 
-        fetchLogs();
-    }, [roomId, selectedWeek]);
-
-    const handleWeekChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setSelectedWeek(event.target.value as string);
-    };
-
-    return (
-        <Container>
-            <Typography variant="h4" gutterBottom>
-                Attendance Logs for Room {roomId}
-            </Typography>
-            <Typography variant="subtitle1" gutterBottom>
-                Select a week to view attendance logs:
-            </Typography>
-            <Select
-                value={selectedWeek}
-                fullWidth
-                style={{ marginBottom: '20px' }}
-            >
-                {weeks.map((week) => (
-                    <MenuItem key={week} value={week}>
-                        {week}
-                    </MenuItem>
-                ))}
-            </Select>
-            {loading ? (
-                <CircularProgress />
-            ) : logs.length > 0 ? (
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Attendees</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {logs.map((log, index) => (
-                            <TableRow key={index}>
-                                <TableCell>{log.date}</TableCell>
-                                <TableCell>{log.attendees.join(', ')}</TableCell>
+    if (isWeeksSuccess) {
+        const weekIds = weeks.map((week: any) => week.id);
+        return (
+            <Container>
+                <NavBar />
+                <Typography variant="h4" gutterBottom>
+                    Attendance Logs for Room {roomId}
+                </Typography>
+                <Typography variant="subtitle1" gutterBottom>
+                    Select a week to view attendance logs:
+                </Typography>
+                <Select
+                    value={selectedWeek}
+                    fullWidth
+                    style={{ marginBottom: '20px' }}
+                    onChange={(e) => setSelectedWeek(e.target.value)}
+                >
+                    {weekIds.map((weekId: string) => (
+                        <MenuItem key={weekId} value={weekId}>
+                            {weekId}
+                        </MenuItem>
+                    ))}
+                </Select>
+                {isLoading ? (
+                    <CircularProgress />
+                ) : logs.length > 0 ? (
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Date</TableCell>
+                                <TableCell>Attendees</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            ) : (
-                <Typography>No logs available for this week.</Typography>
-            )}
-        </Container>
-    );
-};
-
+                        </TableHead>
+                        <TableBody>
+                            {logs.map((log: any, index: any) => (
+                                <TableRow key={index}>
+                                    <TableCell>{log.date}</TableCell>
+                                    <TableCell>{log.attendees.join(', ')}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                ) : (
+                    <Typography>No logs available for this week.</Typography>
+                )}
+            </Container>
+        );
+    };
+}
 export default Logs;

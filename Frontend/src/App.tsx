@@ -12,6 +12,7 @@ import { Home } from './Home.tsx';
 import { Signup } from './Signup.tsx';
 import { ForgotPassword } from './forgotPassword.tsx';
 import {ResetPassword} from './resetPassword.tsx';
+import Logs from './Logs.tsx';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/logs/:roomId/:userId" element={<Logs />} />
         </Routes>
       </Router>
     </Provider>

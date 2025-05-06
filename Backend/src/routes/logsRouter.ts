@@ -82,6 +82,22 @@ logsRouter.put('/', async (req: Request, res: Response): Promise<any> => {
     }
 });
 
+logsRouter.delete('/rooms', async (req: Request, res: Response): Promise<any> => {
+    try {  
+        const { userId, roomName } = req.body;
+        if (!userId || !roomName) {
+            return res.status(400).json({ error: "Missing userId or roomName parameter." });
+        }
+        const roomDocRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomName as string);
+        await roomDocRef.delete();
+        res.status(200).json({ message: "Room deleted successfully." });
+    }
+    catch (error) {
+        console.error("Error deleting room:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
 logsRouter.put('/rooms', async (req: Request, res: Response): Promise<any> => {
     try {
         const {userId, roomName} = req.body;
@@ -90,10 +106,10 @@ logsRouter.put('/rooms', async (req: Request, res: Response): Promise<any> => {
         }
         const userDocRef = db.collection("/Users").doc(userId);
         const roomsRef = userDocRef.collection("rooms");
-        (await roomsRef.add({room_name: roomName, archived: false, weeks: []})).set({}).then(()=>{
+        (await roomsRef.add({room_name: roomName, archived: false, weeks: []})).collection("weeks").doc("week1").set({logs: []}).then(() => {
             return res.status(200).json({ message: "Room saved successfully." });
-        })
-
+        });
+        
     }
     catch (error) {
         console.error("Error saving room:", error);

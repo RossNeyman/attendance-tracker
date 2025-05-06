@@ -13,6 +13,11 @@ export interface week {
   weekId: string;
 }
 
+export interface room {
+  userId: string;
+  roomId: string;
+}
+
 export const logsSlice = createApi({
   reducerPath: 'logsApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/logs' }),
@@ -46,36 +51,51 @@ export const logsSlice = createApi({
         body: { userId, roomName, newRoomName },
       }),
     }),
+    deleteRoom: builder.mutation({
+      query: ({ userId, roomName }) => ({
+        url: `/rooms`,
+        method: 'DELETE',
+        body: { userId, roomName },
+      }),
+    }),
     getActiveRooms: builder.query({
-      query: (userId:string) => ({
+      query: (userId: string) => ({
         url: `/rooms`,
         method: 'GET',
         params: { userId: userId },
       }),
     }),
     getArchivedRooms: builder.query({
-      query: (userId:string) => ({
+      query: (userId: string) => ({
         url: `/rooms`,
         method: 'GET',
         params: { userId: userId },
       }),
     }),
     getRoomLogs: builder.query({
-      query: (week)=>({
+      query: (week) => ({
         url: `/`,
         method: 'GET',
         params: { weekId: week.weekId, roomId: week.roomId, userId: week.userId },
       })
-  })
+    }),
+    getWeeks: builder.query({
+      query: (room) => ({
+        url: `/weeks`,
+        method: 'GET',
+        params: { userId: room.userId, roomId: room.roomId },
+      })
+    }),
   })
 });
 
-export const { 
-  useLogAttendanceMutation, 
-  useCreateUserMutation, 
-  useGetActiveRoomsQuery, 
+export const {
+  useLogAttendanceMutation,
+  useCreateUserMutation,
+  useGetActiveRoomsQuery,
   useGetArchivedRoomsQuery,
   useCreateRoomMutation,
   useChangeRoomNameMutation,
-  useGetRoomLogsQuery
+  useGetRoomLogsQuery,
+  useGetWeeksQuery,
 } = logsSlice;

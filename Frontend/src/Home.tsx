@@ -17,17 +17,19 @@ import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { auth } from './config/firebaseConfig';
 import { useGetActiveRoomsQuery, useGetArchivedRoomsQuery, useCreateRoomMutation, useChangeRoomNameMutation } from './features/logsSlice';
 import { skipToken } from '@reduxjs/toolkit/query/react';
+import { useNavigate } from 'react-router-dom';
 
 export function Home() {
   const theme = useTheme();
-  const [userId, setUserId] = useState<string | null>(null); // Start with null to indicate loading state
+  const [userId, setUserId] = useState<string | null>(null); 
   const { data: rooms = [], refetch: setRooms, isLoading } = useGetActiveRoomsQuery(userId || skipToken);
-  const { data: archivedRooms, refetch: _setArchivedRooms, isLoading: isArchivedLoading } = useGetArchivedRoomsQuery(userId || skipToken);
+  const { data: archivedRooms, refetch: setArchivedRooms, isLoading: isArchivedLoading } = useGetArchivedRoomsQuery(userId || skipToken);
   const [showArchived, setShowArchived] = useState(false);
   const [visibleArchivedCount, setVisibleArchivedCount] = useState(3);
   const [newRoomName, setNewRoomName] = useState('');
   const [createRoom] = useCreateRoomMutation();
   const [changeRoomName] = useChangeRoomNameMutation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -41,12 +43,26 @@ export function Home() {
     return () => unsubscribe(); 
   }, []);
 
+  useEffect(() => {
+    if(rooms && rooms.length > 0) {
+      setRooms();
+    }
+    if(archivedRooms)
+      setArchivedRooms();
+  }, [rooms, archivedRooms])
+
   const handleAddRoom = () => {
     if (userId) {
       createRoom({ userId: userId, roomName: newRoomName });
       setRooms();
     }
   };
+
+  const handleRoomClick = (roomId: string) => {
+    if (!userId) return;
+    navigate(`/logs/${roomId}/${userId}`); 
+  }
+
 
   const handleRoomNameChange = (oldRoomName: string, newRoomName: string) => {
     if (userId) {
@@ -99,7 +115,7 @@ export function Home() {
           {rooms && rooms.map((room: { room_name: string, id: string}) => (
             <Grid key={room.id}>
               <Paper sx={{ p: 2, width: 150, height: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <MeetingRoomIcon color="primary" fontSize="large" />
+                <MeetingRoomIcon color="primary" fontSize="large"/>
                 <TextField
                   value={room.room_name}
                   onChange={(e: { target: { value: string; }; }) => handleRoomNameChange(room.room_name, e.target.value)}
@@ -107,6 +123,9 @@ export function Home() {
                   variant="standard"
                   sx={{ mt: 1, textAlign: 'center' }}
                 />
+                <Button onClick={() => handleRoomClick(room.id)} variant="outlined" sx={{ mt: 1 }}>
+                  View Logs
+                </Button>
               </Paper>
             </Grid>
           ))}
