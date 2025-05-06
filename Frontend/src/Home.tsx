@@ -22,8 +22,8 @@ import { useNavigate } from 'react-router-dom';
 export function Home() {
   const theme = useTheme();
   const [userId, setUserId] = useState<string | null>(null);
-  const { data: rooms = [], refetch: setRooms, isLoading } = useGetActiveRoomsQuery(userId || skipToken);
-  const { data: archivedRooms, refetch: setArchivedRooms, isLoading: isArchivedLoading } = useGetArchivedRoomsQuery(userId || skipToken);
+  const { data: rooms = [], error, refetch: setRooms, isLoading } = useGetActiveRoomsQuery(userId || skipToken);
+  const { data: archivedRooms, error: isArchivedError, refetch: setArchivedRooms, isLoading: isArchivedLoading } = useGetArchivedRoomsQuery(userId || skipToken);
   const [showArchived, setShowArchived] = useState(false);
   const [visibleArchivedCount, setVisibleArchivedCount] = useState(3);
   const [newRoomName, setNewRoomName] = useState('');
@@ -102,8 +102,6 @@ export function Home() {
       setRooms();
     }
   }
-
-
 
   if (userId === null) {
     return <Typography>Loading user information...</Typography>;

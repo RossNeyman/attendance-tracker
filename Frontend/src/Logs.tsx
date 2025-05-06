@@ -6,6 +6,11 @@ import { useGetWeeksQuery } from './features/weeksSlice';
 import NavBar from './components/NavBar';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 
+/*
+ * Logs Component
+ * This component fetches and displays attendance logs for a specific room and week.
+ * It allows users to select a week and view the corresponding logs.
+ */
 const Logs: React.FC = () => {
     const { roomId, userId } = useParams<{ roomId: string, userId: string }>();
     const [selectedWeek, setSelectedWeek] = useState<string>('');
