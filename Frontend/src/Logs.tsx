@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Typography, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Select, Button } from '@mui/material';
 import { useGetRoomLogsQuery} from './features/logsSlice';
@@ -10,7 +10,7 @@ const Logs: React.FC = () => {
     const { roomId, userId } = useParams<{ roomId: string, userId: string }>();
     const [selectedWeek, setSelectedWeek] = useState<string>('');
     const { data: weeks, isLoading: isWeeksLoading, error: isWeeksError, isSuccess: isWeeksSuccess } = useGetWeeksQuery({ userId: userId, roomId: roomId });
-    const { data: logs, error, isLoading, isSuccess, refetch: setLogs } = useGetRoomLogsQuery(
+    const { data: logs, error, isLoading, isSuccess } = useGetRoomLogsQuery(
         selectedWeek ? { userId: userId, roomId: roomId, weekId: selectedWeek } : skipToken
     );
     const navigate = useNavigate();
@@ -74,7 +74,7 @@ const Logs: React.FC = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {logs.map((log: any, index: any) => (
+                            {logs.map((log: any) => (
                                 <TableRow key={log.id}>
                                     <TableCell>{log.timestamp}</TableCell>
                                     <TableCell>{log.email}</TableCell>
