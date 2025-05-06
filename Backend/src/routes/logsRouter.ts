@@ -95,11 +95,11 @@ logsRouter.put('/', async (req: Request, res: Response): Promise<any> => {
 
 logsRouter.delete('/rooms', async (req: Request, res: Response): Promise<any> => {
     try {  
-        const { userId, roomName } = req.body;
-        if (!userId || !roomName) {
-            return res.status(400).json({ error: "Missing userId or roomName parameter." });
+        const { userId, roomId } = req.body;
+        if (!userId || !roomId) {
+            return res.status(400).json({ error: "Missing userId or roomId parameter." });
         }
-        const roomDocRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomName as string);
+        const roomDocRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomId as string);
         await roomDocRef.delete();
         res.status(200).json({ message: "Room deleted successfully." });
     }
@@ -145,6 +145,24 @@ logsRouter.post('/rooms', async (req: Request, res: Response): Promise<any> => {
     }
     catch (error) {
         console.error("Error updating room name:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+})
+
+logsRouter.post('/rooms-archive', async (req: Request, res: Response): Promise<any> => {
+    try{
+        const { userId, roomId } = req.body;
+        if (!userId || !roomId) {
+            return res.status(400).json({ error: "Missing userId or roomId parameter." });
+        }
+        const userDocRef = db.collection("/Users").doc(userId as string);
+        const roomsRef = userDocRef.collection("rooms");
+        const roomDocRef = roomsRef.doc(roomId as string);
+        await roomDocRef.update({ archived: true });
+        res.status(200).json({ message: "Room archived successfully." });
+    }
+    catch (error) {
+        console.error("Error archiving room:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 })

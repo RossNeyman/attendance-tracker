@@ -52,10 +52,10 @@ export const logsSlice = createApi({
       }),
     }),
     deleteRoom: builder.mutation({
-      query: ({ userId, roomName }) => ({
+      query: ({ userId, roomId }) => ({
         url: `/rooms`,
         method: 'DELETE',
-        body: { userId, roomName },
+        body: { userId, roomId },
       }),
     }),
     getActiveRooms: builder.query({
@@ -67,7 +67,7 @@ export const logsSlice = createApi({
     }),
     getArchivedRooms: builder.query({
       query: (userId: string) => ({
-        url: `/rooms`,
+        url: `/rooms-archive`,
         method: 'GET',
         params: { userId: userId },
       }),
@@ -86,6 +86,13 @@ export const logsSlice = createApi({
         params: { userId: room.userId, roomId: room.roomId },
       })
     }),
+    archiveRoom: builder.mutation({
+      query: ({ userId, roomId }) => ({
+        url: `/rooms-archive`,
+        method: 'POST',
+        body: { userId, roomId },
+      }),
+    })
   })
 });
 
@@ -99,4 +106,5 @@ export const {
   useGetRoomLogsQuery,
   useGetWeeksQuery,
   useDeleteRoomMutation,
+  useArchiveRoomMutation,
 } = logsSlice;

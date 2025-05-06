@@ -15,7 +15,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { auth } from './config/firebaseConfig';
-import { useGetActiveRoomsQuery, useGetArchivedRoomsQuery, useCreateRoomMutation, useChangeRoomNameMutation, useDeleteRoomMutation } from './features/logsSlice';
+import { useGetActiveRoomsQuery, useGetArchivedRoomsQuery, useCreateRoomMutation, useChangeRoomNameMutation, useDeleteRoomMutation, useArchiveRoomMutation } from './features/logsSlice';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,6 +30,7 @@ export function Home() {
   const [createRoom] = useCreateRoomMutation();
   const [changeRoomName] = useChangeRoomNameMutation();
   const [deleteRoom] = useDeleteRoomMutation();
+  const [archiveRoom] = useArchiveRoomMutation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,16 +79,21 @@ export function Home() {
 
   const handleArchiveRoom = (roomId: string) => {
     if (userId) {
-      // Archive the room by changing its status in the database
-      console.log(`Archiving room with ID: ${roomId}`);
+      try {
+        archiveRoom({ userId: userId, roomId: roomId });
+        console.log(`Archiving room with ID: ${roomId}`);
+      } catch (error) {
+        console.error('Error archiving room:', error);
+      }
       setRooms();
+      setArchivedRooms();
     }
   }
 
   const handleDeleteRoom = (roomId: string) => {
     if (userId) {
       try{
-        deleteRoom({ userId: userId, roomName: roomId });
+        deleteRoom({ userId: userId, roomId: roomId });
         console.log(`Deleting room with ID: ${roomId}`);
       }
       catch (error) {
