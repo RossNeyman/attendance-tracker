@@ -79,14 +79,6 @@ const NavBar: React.FC = () => {
                     <Button
                         color="inherit"
                         component={Link}
-                        to="/scanner"
-                        sx={{ color: 'common.white', textTransform: 'uppercase', fontWeight: 'medium' }}
-                    >
-                        Scanner
-                    </Button>
-                    <Button
-                        color="inherit"
-                        component={Link}
                         to="/account"
                         sx={{ color: 'common.white', textTransform: 'uppercase', fontWeight: 'medium' }}
                     >

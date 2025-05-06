@@ -111,6 +111,7 @@ export function Login() {
               <span style={{ color: '#cb2323' }}>Class</span>
               <span style={{ color: '#2374cb' }}>TAP</span>
             </Typography>
+            
 
             <Box sx={{ width: '100%', maxWidth: '400px' }}>
               <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, borderRadius: '8px' }}>
