@@ -1,15 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { studentSlice } from '../features/studentSlice';
 import { logsSlice } from '../features/logsSlice';
+import { roomsSlice } from '../features/roomsSlice';
+import { weeksSlice } from '../features/weeksSlice';
 
 export const store = configureStore({
   reducer: {
     [studentSlice.reducerPath]: studentSlice.reducer,
     [logsSlice.reducerPath]: logsSlice.reducer,
-    
+    [roomsSlice.reducerPath]: roomsSlice.reducer,
+    [weeksSlice.reducerPath]: weeksSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(studentSlice.middleware, logsSlice.middleware),
+    getDefaultMiddleware().concat(studentSlice.middleware, logsSlice.middleware, roomsSlice.middleware, weeksSlice.middleware),
     
 });
 
