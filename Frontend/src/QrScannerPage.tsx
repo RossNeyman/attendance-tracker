@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -7,34 +7,16 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { QrScanner } from "./components/QrScanner";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./config/firebaseConfig";
 
 export function QrScannerPage() {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [csiEmail, setCsiEmail] = useState("");
-  const [userId, setUserId] = useState<string | null>(null); 
-  const [roomId, _setRoomId] = useState("defaultRoomId");
-  const [weekId, setWeekId] = useState("");
+  const { roomId, userId } = useParams<{ roomId: string, userId: string }>();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        setUserId(null); 
-        navigate("/login"); 
-      }
-    });
-
-    const currentWeekId = `week-${new Date().toISOString().slice(0, 10)}`;
-    setWeekId(currentWeekId);
-    return () => unsubscribe(); 
-  }, [navigate]);
 
   const handleExit = () => {
     navigate("/");
@@ -88,8 +70,8 @@ export function QrScannerPage() {
             }}
           >
             {/* Pass userId, roomId, and weekId as props to QrScanner */}
-            {userId && weekId && (
-              <QrScanner userId={userId} roomId={roomId} weekId={weekId} />
+            {userId && roomId && (
+              <QrScanner userId={userId} roomId={roomId}/>
             )}
           </Box>
           <Typography

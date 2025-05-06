@@ -21,7 +21,7 @@ function App() {
         <Routes>
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/scanner" element={<QrScannerPage />} />
+          <Route path="/scanner/:userId/:roomId" element={<QrScannerPage />} />
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<Home />} />

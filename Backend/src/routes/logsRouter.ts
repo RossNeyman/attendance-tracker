@@ -4,22 +4,33 @@ import { doc, setDoc, collection, addDoc, where } from "firebase/firestore";
 
 const logsRouter = express.Router();
 
+function getCurrentWeekId(): string {
+    const today = new Date();
+    const lastSunday = new Date(today);
+    const dayOfWeek = today.getDay();
+    if (dayOfWeek !== 0) {
+      lastSunday.setDate(today.getDate() - dayOfWeek);
+    }
+    const month = (lastSunday.getMonth() + 1).toString().padStart(2, '0'); 
+    const day = lastSunday.getDate().toString().padStart(2, '0');
+    const year = lastSunday.getFullYear();
+    return `Week of ${month}-${day}-${year}`;
+  }
+
 logsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     try {
-        const { userId, roomId, weekId } = req.query;
+        const { userId, roomId } = req.query;
         const { email } = req.body;
 
-        if (!userId || !roomId || !weekId || !email) {
+        if (!userId || !roomId || !email) {
             return res.status(400).json({ error: "Missing required parameters." });
         }
 
         const weeksRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomId as string).collection("weeks");
+        const weekId = getCurrentWeekId();
+        await weeksRef.doc(weekId).set({logs:[]});
 
-        if(!await weeksRef.where("week_id", "==", weekId as string).get()) {
-            weeksRef.doc(weekId as string).set({ logs: [] });
-        }
-
-        await weeksRef.doc(weekId as string).collection("logs").add({
+        await weeksRef.doc(weekId).collection("logs").add({
             email: email,
             timestamp: new Date().toISOString(),
         });
@@ -106,7 +117,7 @@ logsRouter.put('/rooms', async (req: Request, res: Response): Promise<any> => {
         }
         const userDocRef = db.collection("/Users").doc(userId);
         const roomsRef = userDocRef.collection("rooms");
-        (await roomsRef.add({room_name: roomName, archived: false, weeks: []})).collection("weeks").doc("week1").set({logs: []}).then(() => {
+        await roomsRef.add({room_name: roomName, archived: false, weeks: []}).then(() => {
             return res.status(200).json({ message: "Room saved successfully." });
         });
         

@@ -15,13 +15,13 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { auth } from './config/firebaseConfig';
-import { useGetActiveRoomsQuery, useGetArchivedRoomsQuery, useCreateRoomMutation, useChangeRoomNameMutation } from './features/logsSlice';
+import { useGetActiveRoomsQuery, useGetArchivedRoomsQuery, useCreateRoomMutation, useChangeRoomNameMutation, useDeleteRoomMutation } from './features/logsSlice';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 import { useNavigate } from 'react-router-dom';
 
 export function Home() {
   const theme = useTheme();
-  const [userId, setUserId] = useState<string | null>(null); 
+  const [userId, setUserId] = useState<string | null>(null);
   const { data: rooms = [], refetch: setRooms, isLoading } = useGetActiveRoomsQuery(userId || skipToken);
   const { data: archivedRooms, refetch: setArchivedRooms, isLoading: isArchivedLoading } = useGetArchivedRoomsQuery(userId || skipToken);
   const [showArchived, setShowArchived] = useState(false);
@@ -29,25 +29,26 @@ export function Home() {
   const [newRoomName, setNewRoomName] = useState('');
   const [createRoom] = useCreateRoomMutation();
   const [changeRoomName] = useChangeRoomNameMutation();
+  const [deleteRoom] = useDeleteRoomMutation();
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUserId(user.uid); 
+        setUserId(user.uid);
       } else {
-        setUserId(null); 
+        setUserId(null);
       }
     });
 
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
-    if(rooms && rooms.length > 0) {
+    if (rooms && rooms.length > 0) {
       setRooms();
     }
-    if(archivedRooms)
+    if (archivedRooms)
       setArchivedRooms();
   }, [rooms, archivedRooms])
 
@@ -60,7 +61,7 @@ export function Home() {
 
   const handleRoomClick = (roomId: string) => {
     if (!userId) return;
-    navigate(`/logs/${roomId}/${userId}`); 
+    navigate(`/logs/${roomId}/${userId}`);
   }
 
 
@@ -75,8 +76,31 @@ export function Home() {
     setVisibleArchivedCount((prev: number) => prev + 3);
   };
 
+  const handleArchiveRoom = (roomId: string) => {
+    if (userId) {
+      // Archive the room by changing its status in the database
+      console.log(`Archiving room with ID: ${roomId}`);
+      setRooms();
+    }
+  }
+
+  const handleDeleteRoom = (roomId: string) => {
+    if (userId) {
+      try{
+        deleteRoom({ userId: userId, roomName: roomId });
+        console.log(`Deleting room with ID: ${roomId}`);
+      }
+      catch (error) {
+        console.error('Error deleting room:', error);
+      }
+      setRooms();
+    }
+  }
+
+
+
   if (userId === null) {
-    return <Typography>Loading user information...</Typography>; 
+    return <Typography>Loading user information...</Typography>;
   }
 
   if (isLoading) {
@@ -112,10 +136,10 @@ export function Home() {
           </Grid>
 
           {/* Render rooms */}
-          {rooms && rooms.map((room: { room_name: string, id: string}) => (
+          {rooms && rooms.map((room: { room_name: string, id: string }) => (
             <Grid key={room.id}>
               <Paper sx={{ p: 2, width: 150, height: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <MeetingRoomIcon color="primary" fontSize="large"/>
+                <MeetingRoomIcon color="primary" fontSize="large" />
                 <TextField
                   value={room.room_name}
                   onChange={(e: { target: { value: string; }; }) => handleRoomNameChange(room.room_name, e.target.value)}
@@ -125,6 +149,22 @@ export function Home() {
                 />
                 <Button onClick={() => handleRoomClick(room.id)} variant="outlined" sx={{ mt: 1 }}>
                   View Logs
+                </Button>
+                <Button
+                  onClick={() => handleArchiveRoom(room.id)}
+                  variant="contained"
+                  color="warning"
+                  sx={{ mt: 1 }}
+                >
+                  Archive
+                </Button>
+                <Button
+                  onClick={() => handleDeleteRoom(room.id)}
+                  variant="contained"
+                  color="error"
+                  sx={{ mt: 1 }}
+                >
+                  Delete
                 </Button>
               </Paper>
             </Grid>

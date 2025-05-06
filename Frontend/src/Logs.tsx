@@ -1,20 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Container, Typography, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Select } from '@mui/material';
-import { useGetRoomLogsQuery, useGetWeeksQuery } from './features/logsSlice';
+import React, { use, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Container, Typography, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Select, Button } from '@mui/material';
+import { useGetRoomLogsQuery, useGetWeeksQuery} from './features/logsSlice';
 import NavBar from './components/NavBar';
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 const Logs: React.FC = () => {
     const { roomId, userId } = useParams<{ roomId: string, userId: string }>();
     const [selectedWeek, setSelectedWeek] = useState<string>('');
     const { data: weeks, isLoading: isWeeksLoading, error: isWeeksError, isSuccess: isWeeksSuccess } = useGetWeeksQuery({ userId: userId, roomId: roomId });
-    const { data: logs, error, isLoading, refetch: setLogs } = useGetRoomLogsQuery({ userId: userId, roomId: roomId, weekId: selectedWeek });
+    const { data: logs, error, isLoading, isSuccess, refetch: setLogs } = useGetRoomLogsQuery(
+        selectedWeek ? { userId: userId, roomId: roomId, weekId: selectedWeek } : skipToken
+    );
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isWeeksSuccess) {
             setSelectedWeek(weeks[weeks.length - 1].id);
+            console.log(weeks);
         }
-        setLogs();
     }, [selectedWeek]);
 
     useEffect(()=> {
@@ -37,6 +41,9 @@ const Logs: React.FC = () => {
         return (
             <Container>
                 <NavBar />
+                <Button onClick={() => {navigate(`/scanner/${userId}/${roomId}`)}}>
+                    Use device as scanner for this room
+                </Button>
                 <Typography variant="h4" gutterBottom>
                     Attendance Logs for Room {roomId}
                 </Typography>
@@ -57,7 +64,7 @@ const Logs: React.FC = () => {
                 </Select>
                 {isLoading ? (
                     <CircularProgress />
-                ) : logs.length > 0 ? (
+                ) : (isSuccess) ? ( logs.length>0 ? (
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -67,15 +74,17 @@ const Logs: React.FC = () => {
                         </TableHead>
                         <TableBody>
                             {logs.map((log: any, index: any) => (
-                                <TableRow key={index}>
-                                    <TableCell>{log.date}</TableCell>
-                                    <TableCell>{log.attendees.join(', ')}</TableCell>
+                                <TableRow key={log.id}>
+                                    <TableCell>{log.timestamp}</TableCell>
+                                    <TableCell>{log.email}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 ) : (
                     <Typography>No logs available for this week.</Typography>
+                )): (
+                    <Typography>Please select a week to view logs</Typography>
                 )}
             </Container>
         );

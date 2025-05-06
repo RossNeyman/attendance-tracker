@@ -23,10 +23,10 @@ export const logsSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/logs' }),
   endpoints: (builder) => ({
     logAttendance: builder.mutation({
-      query: ({ userId, roomId, weekId, email }) => ({
+      query: ({ userId, roomId, email }) => ({
         url: `/`,
         method: 'POST',
-        params: { userId, roomId, weekId },
+        params: { userId, roomId },
         body: { email },
       }),
     }),
@@ -98,4 +98,5 @@ export const {
   useChangeRoomNameMutation,
   useGetRoomLogsQuery,
   useGetWeeksQuery,
+  useDeleteRoomMutation,
 } = logsSlice;

@@ -1,18 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Box, Typography, Button, Alert, Paper } from '@mui/material';
+import { useLogAttendanceMutation } from '../features/logsSlice';
 
-interface QrScannerProps {
-    userId: string;
-    roomId: string;
-    weekId: string;
-}
 
-export function QrScanner({ userId, roomId, weekId }: QrScannerProps) {
+export function QrScanner({ userId, roomId }: { userId: string; roomId: string }) {
     const [scanResult, setScanResult] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [isScanning, setIsScanning] = useState(false);
+    const [logAttendance] = useLogAttendanceMutation();
     const scannerRef = useRef<Html5Qrcode | null>(null);
     const qrRegionId = 'qr-reader';
 
@@ -64,29 +61,14 @@ export function QrScanner({ userId, roomId, weekId }: QrScannerProps) {
     };
 
     const saveScanToBackend = async (email: string) => {
-        try {
-            const response = await fetch(
-                `/logs?userId=${userId}&roomId=${roomId}&weekId=${weekId}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ email }),
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error("Failed to log attendance. Please try again.");
-            }
-
-            const data = await response.json();
-            setSuccess(data.message || "Attendance logged successfully.");
-            setError(null);
-        } catch (err: any) {
-            console.error("Error saving scan to backend:", err);
-            setError(err.message || "Failed to log attendance. Please try again.");
-            setSuccess(null);
+        try{
+            const response = await logAttendance({ userId, roomId, email }).unwrap();
+            console.log('Scan result saved:', response);
+            setSuccess('Scan result saved successfully!');
+        }
+        catch (error) {
+            console.error('Failed to save scan result:', error);
+            setError('Failed to save scan result. Please try again.');
         }
     };
 
