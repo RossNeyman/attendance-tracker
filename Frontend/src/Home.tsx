@@ -8,16 +8,25 @@ import {
   useTheme,
   Grid,
   IconButton,
-  Button,
   Paper,
-  TextField
+  TextField,
+  CircularProgress
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { auth } from './config/firebaseConfig';
-import { useGetActiveRoomsQuery, useGetArchivedRoomsQuery, useCreateRoomMutation, useChangeRoomNameMutation, useDeleteRoomMutation, useArchiveRoomMutation } from './features/roomsSlice';
+import { 
+  useGetActiveRoomsQuery, 
+  useGetArchivedRoomsQuery, 
+  useCreateRoomMutation, 
+  useChangeRoomNameMutation, 
+  useDeleteRoomMutation, 
+  useArchiveRoomMutation,
+  useUnarchiveRoomMutation 
+} from './features/roomsSlice';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 import { useNavigate } from 'react-router-dom';
+import RoomCard from './components/RoomCard';
+import ArchivedRoomCard from './components/ArchivedRoomCard';
 import DogError from './components/dogError';
 
 export function Home() {
@@ -32,6 +41,7 @@ export function Home() {
   const [changeRoomName] = useChangeRoomNameMutation();
   const [deleteRoom] = useDeleteRoomMutation();
   const [archiveRoom] = useArchiveRoomMutation();
+  const [unarchiveRoom] = useUnarchiveRoomMutation();
   const [operationError, setOperationError] = useState<Error | null>(null);
   const navigate = useNavigate();
 
@@ -47,23 +57,14 @@ export function Home() {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (rooms && rooms.length > 0) {
-      setRooms();
-    }
-    if (archivedRooms)
-      setArchivedRooms();
-  }, [rooms, archivedRooms])
-
   const handleAddRoom = async () => {
-    if (userId) {
+    if (userId && newRoomName.trim()) {
       try {
         await createRoom({ userId: userId, roomName: newRoomName }).unwrap();
         setNewRoomName('');
         await setRooms();
       } catch (error) {
         console.error('Error creating room:', error);
-        setOperationError(error as Error);
       }
     }
   };
@@ -71,16 +72,15 @@ export function Home() {
   const handleRoomClick = (roomId: string) => {
     if (!userId) return;
     navigate(`/logs/${roomId}/${userId}`);
-  }
+  };
 
   const handleRoomNameChange = async (oldRoomName: string, newRoomName: string) => {
-    if (userId) {
+    if (userId && newRoomName.trim()) {
       try {
         await changeRoomName({ userId: userId, roomName: oldRoomName, newRoomName: newRoomName }).unwrap();
         await setRooms();
       } catch (error) {
         console.error('Error changing room name:', error);
-        setOperationError(error as Error);
       }
     }
   };
@@ -100,20 +100,30 @@ export function Home() {
         setOperationError(error as Error);
       }
     }
-  }
+  };
+
+  const handleUnarchiveRoom = async (roomId: string) => {
+    if (userId) {
+      try {
+        await unarchiveRoom({ userId: userId, roomId: roomId }).unwrap();
+        await Promise.all([setRooms(), setArchivedRooms()]);
+      } catch (error) {
+        console.error('Error unarchiving room:', error);
+      }
+    }
+  };
 
   const handleDeleteRoom = async (roomId: string) => {
     if (userId) {
       try {
         await deleteRoom({ userId: userId, roomId: roomId }).unwrap();
-        console.log(`Deleting room with ID: ${roomId}`);
         await setRooms();
       } catch (error) {
         console.error('Error deleting room:', error);
         setOperationError(error as Error);
       }
     }
-  }
+  };
 
   if (userId === null) {
     return (
@@ -129,101 +139,140 @@ export function Home() {
   }
 
   if (isLoading) {
-    return <Typography>Loading rooms...</Typography>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+        <Typography sx={{ ml: 2 }}>Loading rooms...</Typography>
+      </Box>
+    );
   }
 
   return (
     <>
       <NavBar />
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
-        <Typography variant="h5" gutterBottom>
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, px: 3 }}>
+        <Typography variant="h4" gutterBottom fontWeight="bold">
           Your Rooms
         </Typography>
-        <Divider sx={{ my: 2, bgcolor: theme.palette.primary.main, height: '2px', width: '80%' }} />
+        <Divider sx={{ my: 2, bgcolor: theme.palette.primary.main, height: '3px', width: '80%', maxWidth: '800px' }} />
 
         {/* Room grid */}
-        <Grid container spacing={2} justifyContent="center">
-          {/* First Room Card with create option */}
-          <Grid key="add-room">
-            <Paper sx={{ p: 2, width: 150, height: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Grid container spacing={3} justifyContent="center" sx={{ maxWidth: 1200, mb: 4 }}>
+          {/* Create new room card */}
+          <Grid>
+            <Paper
+              elevation={3}
+              sx={{
+                width: 200,
+                height: 220,
+                borderRadius: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                p: 2,
+                border: '2px dashed',
+                borderColor: 'primary.light',
+              }}
+            >
+              <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>Create New Room</Typography>
               <TextField
                 value={newRoomName}
-                onChange={(e: { target: { value: any; }; }) => setNewRoomName(e.target.value)}
-                placeholder="New Room Name"
+                onChange={(e) => setNewRoomName(e.target.value)}
+                placeholder="Room Name"
                 size="small"
                 fullWidth
                 sx={{ mb: 1 }}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddRoom()}
               />
-              <IconButton color="primary" onClick={handleAddRoom}>
+              <IconButton
+                color="primary"
+                onClick={handleAddRoom}
+                sx={{ bgcolor: 'primary.light', '&:hover': { bgcolor: 'primary.main', color: 'white' } }}
+              >
                 <AddIcon />
               </IconButton>
             </Paper>
           </Grid>
 
-          {/* Render rooms */}
-          {rooms && rooms.map((room: { room_name: string, id: string }) => (
-            <Grid key={room.id}>
-              <Paper sx={{ p: 2, width: 150, height: 150, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <MeetingRoomIcon color="primary" fontSize="large" />
-                <TextField
-                  value={room.room_name}
-                  onChange={(e: { target: { value: string; }; }) => handleRoomNameChange(room.room_name, e.target.value)}
-                  size="small"
-                  variant="standard"
-                  sx={{ mt: 1, textAlign: 'center' }}
-                />
-                <Button onClick={() => handleRoomClick(room.id)} variant="outlined" sx={{ mt: 1 }}>
-                  View Logs
-                </Button>
-                <Button
-                  onClick={() => handleArchiveRoom(room.id)}
-                  variant="contained"
-                  color="warning"
-                  sx={{ mt: 1 }}
-                >
-                  Archive
-                </Button>
-                <Button
-                  onClick={() => handleDeleteRoom(room.id)}
-                  variant="contained"
-                  color="error"
-                  sx={{ mt: 1 }}
-                >
-                  Delete
-                </Button>
-              </Paper>
+          {/* Render active rooms */}
+          {rooms && rooms.map((room: { id: any; room_name?: string; }) => (
+            <Grid>
+              <RoomCard
+                room={{
+                  id: String(room.id),
+                  room_name: room.room_name || 'Unnamed Room'
+                }}
+                onRoomClick={handleRoomClick}
+                onArchive={handleArchiveRoom}
+                onDelete={handleDeleteRoom}
+                onNameChange={handleRoomNameChange}
+              />
             </Grid>
           ))}
         </Grid>
 
-        {/* Archived Rooms Toggle */}
-        <Button onClick={() => setShowArchived(!showArchived)} sx={{ mt: 3 }} variant="contained">
-          Archived Rooms
-        </Button>
+        {/* Archived Rooms Section */}
+        <Box 
+          sx={{ 
+            width: '100%', 
+            backgroundColor: 'grey.100', 
+            p: 3, 
+            borderRadius: 2,
+            maxWidth: 1200,
+            cursor: 'pointer',
+            '&:hover': {
+              backgroundColor: 'grey.200',
+            }
+          }}
+          onClick={() => setShowArchived(!showArchived)}
+        >
+          <Typography variant="h5" sx={{ textAlign: 'center', color: 'grey.700' }}>
+            {showArchived ? 'Hide Archived Rooms' : 'Show Archived Rooms'} 
+            ({archivedRooms?.length || 0})
+          </Typography>
+        </Box>
 
         {showArchived && (
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
+          <Box sx={{ mt: 3, width: '100%', maxWidth: 1200 }}>
             {isArchivedLoading ? (
-              <Typography>Loading archived rooms...</Typography>
-            ) : archivedRooms && archivedRooms.length === 0 ? (
-              <Typography>No archived rooms found.</Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                <CircularProgress size={30} />
+                <Typography sx={{ ml: 2 }}>Loading archived rooms...</Typography>
+              </Box>
+            ) : archivedRooms?.length === 0 ? (
+              <Typography variant="body1" sx={{ textAlign: 'center', p: 3, color: 'grey.600' }}>
+                No archived rooms found.
+              </Typography>
             ) : (
               <>
-                <Grid container spacing={2} justifyContent="center">
-                  {archivedRooms.slice(0, visibleArchivedCount).map((room: { room_name: any; id: string }) => (
-                    <Grid key={room.id || room.room_name}>
-                      <Paper sx={{ p: 2, width: 120, height: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                        <MeetingRoomIcon color="action" fontSize="large" />
-                        <Typography variant="body2" mt={1}>{room.room_name}</Typography>
-                      </Paper>
-                    </Grid>
-                  ))}
+                <Grid container spacing={3} justifyContent="center">
+                  {archivedRooms.slice(0, visibleArchivedCount).map((room: { id: any; room_name?: string; }) => (
+                      <Grid>
+                        <ArchivedRoomCard
+                          room={{
+                            id: String(room.id),
+                            room_name: room.room_name || 'Unnamed Room'
+                          }}
+                          onRoomClick={handleRoomClick}
+                          onUnarchive={handleUnarchiveRoom}
+                        />
+                      </Grid>
+                    ))}
                 </Grid>
                 {archivedRooms.length > visibleArchivedCount && (
-                  <Button onClick={handleSeeMoreArchived} sx={{ mt: 3 }} variant="outlined">
-                    See More Rooms
-                  </Button>
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                    <IconButton
+                      onClick={handleSeeMoreArchived}
+                      sx={{ 
+                        bgcolor: 'grey.300', 
+                        '&:hover': { bgcolor: 'grey.400' },
+                        p: 1
+                      }}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  </Box>
                 )}
               </>
             )}
