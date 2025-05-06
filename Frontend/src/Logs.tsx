@@ -1,7 +1,8 @@
 import React, { use, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Typography, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Select, Button } from '@mui/material';
-import { useGetRoomLogsQuery, useGetWeeksQuery} from './features/logsSlice';
+import { useGetRoomLogsQuery} from './features/logsSlice';
+import { useGetWeeksQuery } from './features/weeksSlice';
 import NavBar from './components/NavBar';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 

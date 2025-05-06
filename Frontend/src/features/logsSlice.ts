@@ -7,8 +7,6 @@ export interface user {
   email: string;
 }
 
-
-
 export const logsSlice = createApi({
   reducerPath: 'logsApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/logs' }),
@@ -28,7 +26,6 @@ export const logsSlice = createApi({
         body: user,
       }),
     }),
-
     getRoomLogs: builder.query({
       query: (week) => ({
         url: `/`,

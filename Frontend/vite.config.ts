@@ -28,6 +28,14 @@ export default defineConfig({
         target: 'http://localhost:8000',
         changeOrigin: true,
       },
+      '/weeks': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+      '/rooms': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
     },
   },
 });

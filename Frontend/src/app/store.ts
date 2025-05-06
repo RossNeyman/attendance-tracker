@@ -12,8 +12,11 @@ export const store = configureStore({
     [weeksSlice.reducerPath]: weeksSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(studentSlice.middleware, logsSlice.middleware, roomsSlice.middleware, weeksSlice.middleware),
-    
+    getDefaultMiddleware().concat(
+      studentSlice.middleware, 
+      logsSlice.middleware, 
+      roomsSlice.middleware, 
+      weeksSlice.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

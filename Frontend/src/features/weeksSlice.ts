@@ -1,10 +1,4 @@
-import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query";
-
-export interface week {
-    userId: string;
-    roomId: string;
-    weekId: string;
-}
+import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
 
 export interface room {
     userId: string;
@@ -15,7 +9,7 @@ export const weeksSlice = createApi({
     reducerPath: 'weeksApi',
     baseQuery: fetchBaseQuery({ baseUrl: '/weeks' }),
     endpoints: (builder) => ({
-        getWeeks: builder.query<week[], room>({
+        getWeeks: builder.query({
             query: (room) => ({
                 url: `/`,
                 method: 'GET',
@@ -25,6 +19,6 @@ export const weeksSlice = createApi({
     })
 });
 
-export const {
+export const {  
     useGetWeeksQuery
 } = weeksSlice;
