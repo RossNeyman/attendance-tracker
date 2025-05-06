@@ -45,7 +45,13 @@ export const roomsSlice = createApi({
                 method: 'POST',
                 body: { userId, roomId },
             }),
-        })
+        }),
+        unarchiveRoom: builder.mutation({
+            query: ({ userId, roomId }) => ({
+              url: `/users/${userId}/rooms/${roomId}/unarchive`,
+              method: 'POST',
+            }),
+          }),
     })
 });
 
@@ -55,5 +61,6 @@ export const {
     useCreateRoomMutation,
     useChangeRoomNameMutation,
     useDeleteRoomMutation,
-    useArchiveRoomMutation
+    useArchiveRoomMutation,
+    useUnarchiveRoomMutation,
 } = roomsSlice;
