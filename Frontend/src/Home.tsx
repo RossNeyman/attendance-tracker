@@ -27,12 +27,13 @@ import { skipToken } from '@reduxjs/toolkit/query/react';
 import { useNavigate } from 'react-router-dom';
 import RoomCard from './components/RoomCard';
 import ArchivedRoomCard from './components/ArchivedRoomCard';
+import DogError from './components/dogError';
 
 export function Home() {
   const theme = useTheme();
   const [userId, setUserId] = useState<string | null>(null);
   const { data: rooms = [], error, refetch: setRooms, isLoading } = useGetActiveRoomsQuery(userId || skipToken);
-  const { data: archivedRooms = [], error: isArchivedError, refetch: setArchivedRooms, isLoading: isArchivedLoading } = useGetArchivedRoomsQuery(userId || skipToken);
+  const { data: archivedRooms, error: isArchivedError, refetch: setArchivedRooms, isLoading: isArchivedLoading } = useGetArchivedRoomsQuery(userId || skipToken);
   const [showArchived, setShowArchived] = useState(false);
   const [visibleArchivedCount, setVisibleArchivedCount] = useState(3);
   const [newRoomName, setNewRoomName] = useState('');
@@ -41,6 +42,7 @@ export function Home() {
   const [deleteRoom] = useDeleteRoomMutation();
   const [archiveRoom] = useArchiveRoomMutation();
   const [unarchiveRoom] = useUnarchiveRoomMutation();
+  const [operationError, setOperationError] = useState<Error | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -91,9 +93,11 @@ export function Home() {
     if (userId) {
       try {
         await archiveRoom({ userId: userId, roomId: roomId }).unwrap();
+        console.log(`Archiving room with ID: ${roomId}`);
         await Promise.all([setRooms(), setArchivedRooms()]);
       } catch (error) {
         console.error('Error archiving room:', error);
+        setOperationError(error as Error);
       }
     }
   };
@@ -116,6 +120,7 @@ export function Home() {
         await setRooms();
       } catch (error) {
         console.error('Error deleting room:', error);
+        setOperationError(error as Error);
       }
     }
   };
@@ -127,6 +132,10 @@ export function Home() {
         <Typography sx={{ ml: 2 }}>Loading user information...</Typography>
       </Box>
     );
+  }
+
+  if (error || isArchivedError || operationError) {
+    return <DogError />;
   }
 
   if (isLoading) {
@@ -173,7 +182,7 @@ export function Home() {
                 placeholder="Room Name"
                 size="small"
                 fullWidth
-                sx={{ mb: 2 }}
+                sx={{ mb: 1 }}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddRoom()}
               />
               <IconButton
