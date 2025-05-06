@@ -18,6 +18,7 @@ import { auth } from './config/firebaseConfig';
 import { useGetActiveRoomsQuery, useGetArchivedRoomsQuery, useCreateRoomMutation, useChangeRoomNameMutation, useDeleteRoomMutation, useArchiveRoomMutation } from './features/roomsSlice';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 import { useNavigate } from 'react-router-dom';
+import DogError from './components/dogError';
 
 export function Home() {
   const theme = useTheme();
@@ -31,6 +32,7 @@ export function Home() {
   const [changeRoomName] = useChangeRoomNameMutation();
   const [deleteRoom] = useDeleteRoomMutation();
   const [archiveRoom] = useArchiveRoomMutation();
+  const [operationError, setOperationError] = useState<Error | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,10 +55,16 @@ export function Home() {
       setArchivedRooms();
   }, [rooms, archivedRooms])
 
-  const handleAddRoom = () => {
+  const handleAddRoom = async () => {
     if (userId) {
-      createRoom({ userId: userId, roomName: newRoomName });
-      setRooms();
+      try {
+        await createRoom({ userId: userId, roomName: newRoomName }).unwrap();
+        setNewRoomName('');
+        await setRooms();
+      } catch (error) {
+        console.error('Error creating room:', error);
+        setOperationError(error as Error);
+      }
     }
   };
 
@@ -65,11 +73,15 @@ export function Home() {
     navigate(`/logs/${roomId}/${userId}`);
   }
 
-
-  const handleRoomNameChange = (oldRoomName: string, newRoomName: string) => {
+  const handleRoomNameChange = async (oldRoomName: string, newRoomName: string) => {
     if (userId) {
-      changeRoomName({ userId: userId, roomName: oldRoomName, newRoomName: newRoomName });
-      setRooms();
+      try {
+        await changeRoomName({ userId: userId, roomName: oldRoomName, newRoomName: newRoomName }).unwrap();
+        await setRooms();
+      } catch (error) {
+        console.error('Error changing room name:', error);
+        setOperationError(error as Error);
+      }
     }
   };
 
@@ -77,34 +89,38 @@ export function Home() {
     setVisibleArchivedCount((prev: number) => prev + 3);
   };
 
-  const handleArchiveRoom = (roomId: string) => {
+  const handleArchiveRoom = async (roomId: string) => {
     if (userId) {
       try {
-        archiveRoom({ userId: userId, roomId: roomId });
+        await archiveRoom({ userId: userId, roomId: roomId }).unwrap();
         console.log(`Archiving room with ID: ${roomId}`);
+        await Promise.all([setRooms(), setArchivedRooms()]);
       } catch (error) {
         console.error('Error archiving room:', error);
+        setOperationError(error as Error);
       }
-      setRooms();
-      setArchivedRooms();
     }
   }
 
-  const handleDeleteRoom = (roomId: string) => {
+  const handleDeleteRoom = async (roomId: string) => {
     if (userId) {
-      try{
-        deleteRoom({ userId: userId, roomId: roomId });
+      try {
+        await deleteRoom({ userId: userId, roomId: roomId }).unwrap();
         console.log(`Deleting room with ID: ${roomId}`);
-      }
-      catch (error) {
+        await setRooms();
+      } catch (error) {
         console.error('Error deleting room:', error);
+        setOperationError(error as Error);
       }
-      setRooms();
     }
   }
 
   if (userId === null) {
     return <Typography>Loading user information...</Typography>;
+  }
+
+  if (error || isArchivedError || operationError) {
+    return <DogError />;
   }
 
   if (isLoading) {
@@ -132,6 +148,7 @@ export function Home() {
                 size="small"
                 fullWidth
                 sx={{ mb: 1 }}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddRoom()}
               />
               <IconButton color="primary" onClick={handleAddRoom}>
                 <AddIcon />
@@ -189,8 +206,8 @@ export function Home() {
             ) : (
               <>
                 <Grid container spacing={2} justifyContent="center">
-                  {archivedRooms.slice(0, visibleArchivedCount).map((room: { room_name: any; }) => (
-                    <Grid key={room.room_name}>
+                  {archivedRooms.slice(0, visibleArchivedCount).map((room: { room_name: any; id: string }) => (
+                    <Grid key={room.id || room.room_name}>
                       <Paper sx={{ p: 2, width: 120, height: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <MeetingRoomIcon color="action" fontSize="large" />
                         <Typography variant="body2" mt={1}>{room.room_name}</Typography>
