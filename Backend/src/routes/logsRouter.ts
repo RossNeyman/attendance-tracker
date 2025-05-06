@@ -1,9 +1,16 @@
 import express, { Request, Response } from "express";
 import db from "../db.ts";
-import { doc, setDoc, collection, addDoc, where } from "firebase/firestore";
 
 const logsRouter = express.Router();
 
+/**
+ * Generates a unique identifier for the current week based on the date of the most recent Sunday.
+ *
+ * @returns {string} A string in the format "Week of MM-DD-YYYY" representing the current week, to be used as the document ID for the week in Firestore.
+ *
+ * @example
+ * If today is May 5, 2025 (Monday), the function will return "Week of 05-04-2025".
+ */
 function getCurrentWeekId(): string {
     const today = new Date();
     const lastSunday = new Date(today);
@@ -15,8 +22,72 @@ function getCurrentWeekId(): string {
     const day = lastSunday.getDate().toString().padStart(2, '0');
     const year = lastSunday.getFullYear();
     return `Week of ${month}-${day}-${year}`;
-  }
+}
 
+/**
+ * @swagger
+ * /logs/:
+ *   get:
+ * *     summary: Retrieve logs for a specific user, room, and week
+ * *     description: This endpoint retrieves logs for a specific user, room, and week based on the userId, roomId, and weekId parameters.
+ * *     responses:
+ * *       200:
+ * *         description: Successfully retrieved logs
+ * *         content:
+ * *           application/json:
+ * *             schema:
+ * *               type: object
+ * *               example:
+ * *                 message: "Logs retrieved successfully"
+ * *       500:
+ * *         description: Internal server error
+ * *         content:
+ * *           application/json:
+ * *             schema:
+ * *               type: object
+ * *               example:
+ * *                 error: "Internal server error"
+ */
+logsRouter.get('/', async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { userId, roomId, weekId } = req.query;
+        if (!userId || !roomId || !weekId) {
+            return res.status(400).json({ error: "Missing required parameters." });
+        }
+        const logsRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomId as string).collection("weeks").doc(weekId as string).collection("logs");
+        const snapshot = await logsRef.get();
+        const logs: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).json(logs);
+    } catch (error) {
+        console.error("Error fetching logs:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
+/**
+ * @swagger
+ * * /logs/:
+ * *   post:
+ * *     summary: Log attendance for a specific user, room, and week
+ * *     description: This endpoint logs attendance for a specific user, room, and week based on the userId, roomId, and email parameters.
+ * *     responses:
+ * *       200:
+ * *         description: Successfully logged attendance
+ * *         content:
+ * *           application/json:
+ * *             schema:
+ * *               type: object
+ * *               example:
+ * *                 message: "Attendance logged successfully"
+ * *       500:
+ * *         description: Internal server error
+ * *         content:
+ * *           application/json:
+ * *             schema:
+ * *               type: object
+ * *               example:
+ * *                 error: "Internal server error"
+ */
 logsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     try {
         const { userId, roomId } = req.query;
@@ -41,38 +112,30 @@ logsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     }
 });
 
-logsRouter.get('/', async (req: Request, res: Response): Promise<any> => {
-    try {
-        const { userId, roomId, weekId } = req.query;
-        if (!userId || !roomId || !weekId) {
-            return res.status(400).json({ error: "Missing required parameters." });
-        }
-        const logsRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomId as string).collection("weeks").doc(weekId as string).collection("logs");
-        const snapshot = await logsRef.get();
-        const logs: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        res.status(200).json(logs);
-    } catch (error) {
-        console.error("Error fetching logs:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
-
-logsRouter.get('/weeks', async (req: Request, res: Response): Promise<any> => {
-    try { 
-        const { userId, roomId } = req.query;
-        if (!userId || !roomId) {
-            return res.status(400).json({ error: "Missing required parameters." });
-        }
-        const weeksRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomId as string).collection("weeks");
-        const snapshot = await weeksRef.get();
-        const weeks: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        res.status(200).json(weeks);
-    } catch (error) {
-        console.error("Error fetching weeks:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
-
+/**
+ * * @swagger
+ * * /logs/:
+ * *   put:
+ * *     summary: Add or update user data
+ * *     description: This endpoint adds or updates user data based on the userId, first_name, last_name, and email parameters.
+ * *     responses:
+ * *       200:
+ * *         description: Successfully added/updated user data
+ * *         content:
+ * *           application/json:
+ * *             schema:
+ * *               type: object
+ * *               example:
+ * *                 message: "User data added/updated successfully"
+ * *       500:
+ * *         description: Internal server error
+ * *         content:
+ * *           application/json:
+ * *             schema:
+ * *               type: object
+ * *               example:
+ * *                 error: "Internal server error"
+ */
 logsRouter.put('/', async (req: Request, res: Response): Promise<any> => {
     try {
         const {userId, first_name, last_name, email} = req.body;
@@ -89,114 +152,6 @@ logsRouter.put('/', async (req: Request, res: Response): Promise<any> => {
         res.status(200).json({ message: "User saved successfully." });
     } catch (error) {
         console.error("Error saving user:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
-
-logsRouter.delete('/rooms', async (req: Request, res: Response): Promise<any> => {
-    try {  
-        const { userId, roomId } = req.body;
-        if (!userId || !roomId) {
-            return res.status(400).json({ error: "Missing userId or roomId parameter." });
-        }
-        const roomDocRef = db.collection("/Users").doc(userId as string).collection("rooms").doc(roomId as string);
-        await roomDocRef.delete();
-        res.status(200).json({ message: "Room deleted successfully." });
-    }
-    catch (error) {
-        console.error("Error deleting room:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
-
-logsRouter.put('/rooms', async (req: Request, res: Response): Promise<any> => {
-    try {
-        const {userId, roomName} = req.body;
-        if (!userId || !roomName) {
-            return res.status(400).json({ error: "Missing userId or roomName parameter." });
-        }
-        const userDocRef = db.collection("/Users").doc(userId);
-        const roomsRef = userDocRef.collection("rooms");
-        await roomsRef.add({room_name: roomName, archived: false, weeks: []}).then(() => {
-            return res.status(200).json({ message: "Room saved successfully." });
-        });
-        
-    }
-    catch (error) {
-        console.error("Error saving room:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
-
-logsRouter.post('/rooms', async (req: Request, res: Response): Promise<any> => {
-    try{
-        const { userId, roomName, newRoomName } = req.body;
-        if (!userId || !roomName || !newRoomName) {
-            return res.status(400).json({ error: "Missing userId, roomName or newRoomName parameter." });
-        }
-        if(roomName === newRoomName) {
-            return res.status(400).json({ error: "New room name is the same as the old one." });
-        }
-        const userDocRef = db.collection("/Users").doc(userId as string);
-        const roomsRef = userDocRef.collection("rooms");
-        const roomDocRef = roomsRef.doc(roomName as string);
-        await roomDocRef.update({ name: newRoomName });
-        res.status(200).json({ message: "Room name updated successfully." });
-    }
-    catch (error) {
-        console.error("Error updating room name:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-})
-
-logsRouter.post('/rooms-archive', async (req: Request, res: Response): Promise<any> => {
-    try{
-        const { userId, roomId } = req.body;
-        if (!userId || !roomId) {
-            return res.status(400).json({ error: "Missing userId or roomId parameter." });
-        }
-        const userDocRef = db.collection("/Users").doc(userId as string);
-        const roomsRef = userDocRef.collection("rooms");
-        const roomDocRef = roomsRef.doc(roomId as string);
-        await roomDocRef.update({ archived: true });
-        res.status(200).json({ message: "Room archived successfully." });
-    }
-    catch (error) {
-        console.error("Error archiving room:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-})
-
-logsRouter.get('/rooms', async (req: Request, res: Response): Promise<any> => {
-    try {
-        const { userId } = req.query;
-        if (!userId) {
-            return res.status(400).json({ error: "Missing userId parameter." });
-        }
-        const roomsRef = db.collection("/Users").doc(userId as string).collection("rooms").where("archived", "==", false);
-        const snapshot = await roomsRef.get();
-        const rooms: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        res.status(200).json(rooms);
-    }
-    catch (error) {
-        console.error("Error fetching rooms:", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
-
-logsRouter.get('/rooms-archive', async (req: Request, res: Response): Promise<any> => {
-    try {
-        const {userId} = req.query;
-        if (!userId) {
-            return res.status(400).json({ error: "Missing userId parameter." });
-        }
-        const roomsRef = db.collection("/Users").doc(userId as string).collection("rooms").where("archived", "==", true);
-        const snapshot = await roomsRef.get();
-        const rooms: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        res.status(200).json(rooms);
-    }
-    catch (error) {
-        console.error("Error fetching rooms:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 });

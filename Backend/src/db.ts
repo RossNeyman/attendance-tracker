@@ -10,6 +10,7 @@ initializeApp({credential: cert(serviceAccount as ServiceAccount)});
 const db = getFirestore(); 
 export default db;
 
+//TODO - IMPLEMENT TOKEN VERIFICATION ON REQUESTS
 export async function verifyToken(req, res, next) {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
