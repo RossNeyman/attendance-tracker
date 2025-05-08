@@ -1,4 +1,4 @@
-import { https } from "firebase-functions";
+import { https, onInit } from "firebase-functions";
 import app from "./app.js";
 
 
@@ -6,4 +6,9 @@ import app from "./app.js";
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, (): void => console.log(`running on port ${PORT}`));
 
-export const backend = https.onRequest(app);
+let initiliazedBackend;
+onInit(async () => {
+  initiliazedBackend = await https.onRequest(app);
+});
+
+export const backend = { initiliazedBackend };

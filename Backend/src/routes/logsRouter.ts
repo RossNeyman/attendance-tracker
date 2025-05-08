@@ -24,30 +24,7 @@ function getCurrentWeekId(): string {
     return `Week of ${month}-${day}-${year}`;
 }
 
-/**
- * @swagger
- * /logs/:
- *   get:
- *     summary: Retrieve logs for a specific user, room, and week
- *     description: This endpoint retrieves logs for a specific user, room, and week based on the userId, roomId, and weekId parameters.
- *     responses:
- *       200:
- *         description: Successfully retrieved logs
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 message: "Logs retrieved successfully"
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 error: "Internal server error"
- */
+
 logsRouter.get('/', async (req: Request, res: Response): Promise<any> => {
     try {
         const { userId, roomId, weekId } = req.query;
@@ -64,30 +41,7 @@ logsRouter.get('/', async (req: Request, res: Response): Promise<any> => {
     }
 });
 
-/**
- * @swagger
- * /logs/:
- *   post:
- *     summary: Log attendance for a specific user, room, and week
- *     description: This endpoint logs attendance for a specific user, room, and week based on the userId, roomId, and email parameters.
- *     responses:
- *       200:
- *         description: Successfully logged attendance
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 message: "Attendance logged successfully"
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 error: "Internal server error"
- */
+
 logsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     try {
         const { userId, roomId } = req.query;
@@ -112,30 +66,7 @@ logsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     }
 });
 
-/**
- *  @swagger
- *  /logs/:
- *    put:
- *      summary: Add or update user data
- *      description: This endpoint adds or updates user data based on the userId, first_name, last_name, and email parameters.
- *      responses:
- *        200:
- *          description: Successfully added/updated user data
- *          content:
- *            application/json:
- *              schema:
- *                type: object
- *                example:
- *                  message: "User data added/updated successfully"
- *        500:
- *          description: Internal server error
- *         content:
- *            application/json:
- *              schema:
- *                type: object
- *                example:
- *                  error: "Internal server error"
- */
+
 logsRouter.put('/', async (req: Request, res: Response): Promise<any> => {
     try {
         const {userId, first_name, last_name, email} = req.body;
