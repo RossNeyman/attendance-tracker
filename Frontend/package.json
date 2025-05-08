@@ -28,6 +28,9 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.5.0"
   },
+  "engines": {
+    "node": "22"
+  },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
     "@firebase/testing": "^0.20.11",
