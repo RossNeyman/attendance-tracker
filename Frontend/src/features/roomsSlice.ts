@@ -1,8 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+//const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+
 export const roomsSlice = createApi({
     reducerPath: 'roomsApi',
-    baseQuery: fetchBaseQuery({ baseUrl: '/rooms' }),
+    baseQuery: fetchBaseQuery({ baseUrl:  '/rooms' }),
     endpoints: (builder) => ({
         createRoom: builder.mutation({
             query: ({ userId, roomName }) => ({

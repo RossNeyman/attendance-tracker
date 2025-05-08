@@ -3,24 +3,6 @@ import db from "../db.js";
 
 const roomsRouter = express.Router();
 
-/**
- * @swagger
- * /rooms/:
- *   get:
- *     summary: retrieve all rooms for a user
- *     description: This endpoint retrieves all rooms for a user based on the userId parameter.
- *     responses:
- *       200:
- *         description: Successfully retrieved rooms
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 message: "Rooms retrieved successfully"
- *       500:
- *         description: Internal server error
- */
 roomsRouter.get('/', async (req: Request, res: Response): Promise<any> => {
     try {
         const { userId } = req.query;
@@ -38,24 +20,6 @@ roomsRouter.get('/', async (req: Request, res: Response): Promise<any> => {
     }
 });
 
-/**
- * @swagger
- * /rooms/archive:
- *   get:
- *     summary: retrieve all archived rooms for a user
- *     description: This endpoint retrieves all archived rooms for a user based on the userId parameter.
- *     responses:
- *       200:
- *         description: Successfully retrieved archived rooms
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 message: "Archived rooms retrieved successfully"
- *       500:
- *         description: Internal server error
- */
 roomsRouter.get('/archive', async (req: Request, res: Response): Promise<any> => {
     try {
         const {userId} = req.query;
@@ -73,24 +37,6 @@ roomsRouter.get('/archive', async (req: Request, res: Response): Promise<any> =>
     }
 });
 
-/**
- * @swagger
- * /rooms/:
- *   put:
- *     summary: Add a new room for a user
- *     description: This endpoint adds a new room for a user based on the userId and roomName parameters.
- *     responses:
- *       200:
- *         description: Successfully added room
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 message: "Room added successfully"
- *       500:
- *         description: Internal server error
- */
 roomsRouter.put('/', async (req: Request, res: Response): Promise<any> => {
     try {
         const {userId, roomName} = req.body;
@@ -110,24 +56,6 @@ roomsRouter.put('/', async (req: Request, res: Response): Promise<any> => {
     }
 });
 
-/**
- * @swagger
- *  /rooms/:
- *    post:
- *      summary: Update the name of a room for a user
- *      description: This endpoint updates the name of a room for a user based on the userId, roomName, and newRoomName parameters.
- *      responses:
- *        200:
- *          description: Successfully updated room name
- *          content:
- *            application/json:
- *              schema:
- *                type: object
- *                example:
- *                  message: "Room name updated successfully"
- *        500:
- *          description: Internal server error
- * */
 roomsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     try{
         const { userId, roomName, newRoomName } = req.body;
@@ -149,24 +77,6 @@ roomsRouter.post('/', async (req: Request, res: Response): Promise<any> => {
     }
 })
 
-/**
- * @swagger
- * /rooms/archive:
- *   post:
- *     summary: Archive a room for a user
- *     description: This endpoint archives a room for a user based on the userId and roomId parameters.
- *     responses:
- *       200:
- *         description: Successfully archived room
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 message: "Room archived successfully"
- *       500:
- *         description: Internal server error
- */
 roomsRouter.post('/archive', async (req: Request, res: Response): Promise<any> => {
     try{
         const { userId, roomId } = req.body;
@@ -185,24 +95,6 @@ roomsRouter.post('/archive', async (req: Request, res: Response): Promise<any> =
     }
 })
 
-/**
- * @swagger
- * /rooms/:
- *   delete:
- *     summary: Delete a room for a user
- *     description: This endpoint deletes a room for a user based on the userId and roomId parameters.
- *     responses:
- *       200:
- *         description: Successfully deleted room
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 message: "Room deleted successfully"
- *       500:
- *         description: Internal server error
- */
 roomsRouter.delete('/', async (req: Request, res: Response): Promise<any> => {
     try {  
         const { userId, roomId } = req.body;

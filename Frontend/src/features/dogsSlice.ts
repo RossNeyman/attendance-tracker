@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const THE_DOG_API_KEY = "live_gdnIgjqg1qxona0BmW1medBtAUvBQqv72KsbmF4ix4B3KEuTSHkVksmr4wjyGce1";
+const THE_DOG_API_KEY = import.meta.env.VITE_THE_DOG_API_KEY || '';
 
 export const dogsSlice = createApi({
     reducerPath: 'dogsApi',
