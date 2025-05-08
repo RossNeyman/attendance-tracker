@@ -1,41 +1,50 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const backendUrl = env.BACKEND_URL || 'https://localhost:8000'; 
+
+  return {
   plugins: [react()],
-  root: '.', // Root remains the Frontend directory
-  publicDir: '../public', // Specify the public directory for static assets
+  root: '.', 
+  publicDir: '../public', 
   build: {
-    outDir: '../dist', // Output directory for the build
-    emptyOutDir: true, // Clear the output directory before building
+    outDir: '../dist', 
+    emptyOutDir: true,
     rollupOptions: {
-      input: './index.html', // Use a relative path to the index.html file
+      input: './index.html', 
     },
   },
   resolve: {
     alias: {
-      crypto: resolve(__dirname, 'node_modules/crypto-browserify'), // Polyfill for crypto
+      crypto: resolve(__dirname, 'node_modules/crypto-browserify'), 
     },
   },
   server: {
     proxy: {
       '/students': {
-        target: 'http://localhost:8000',
+        target: backendUrl,
         changeOrigin: true,
       },
       '/logs': {
-        target: 'http://localhost:8000',
+        target: backendUrl,
         changeOrigin: true,
       },
       '/weeks': {
-        target: 'http://localhost:8000',
+        target: backendUrl,
         changeOrigin: true,
       },
       '/rooms': {
-        target: 'http://localhost:8000',
+        target: backendUrl,
         changeOrigin: true,
       },
-    },
+      '/dogs': {
+        target: backendUrl,
+        changeOrigin: true,
+      },
   },
+  }
+};
 });

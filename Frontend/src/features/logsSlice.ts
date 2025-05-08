@@ -9,7 +9,7 @@ export interface user {
 
 export const logsSlice = createApi({
   reducerPath: 'logsApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/logs' }),
+  baseQuery: fetchBaseQuery({ baseUrl: `/logs` }),
   endpoints: (builder) => ({
     logAttendance: builder.mutation({
       query: ({ userId, roomId, email }) => ({
