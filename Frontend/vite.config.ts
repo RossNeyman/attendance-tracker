@@ -4,7 +4,7 @@ import { resolve } from 'path';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const backendUrl = env.BACKEND_URL || 'https://localhost:8000'; 
+  const backendUrl = env.BACKEND_URL || 'https://localhost:8080'; 
 
   return {
   plugins: [react()],
