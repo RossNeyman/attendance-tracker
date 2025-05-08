@@ -29,6 +29,7 @@ jobs:
         working-directory: Backend
         run: |
           npm ci
+          npm run build
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
