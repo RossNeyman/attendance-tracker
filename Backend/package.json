@@ -2,11 +2,13 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "server.ts",
+  "main": "src/server.ts",
   "scripts": {
     "test": "jest",
     "start": "ts-node src/server",
-    "dev": "nodemon --exec node --loader ts-node/esm src/server.ts"
+    "build": "tsc",
+    "dev": "nodemon --exec node --loader ts-node/esm src/server.ts",
+    "deploy": "firebase deploy --only functions:backend"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +23,11 @@
     "supertest": "^7.1.0",
     "ts-jest": "^29.3.2",
     "ts-node": "^10.9.2",
+    "firebase-functions-test": "^3.1.0",
     "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": "22"
   },
   "dependencies": {
     "@types/express": "^5.0.1",
@@ -30,6 +36,7 @@
     "express": "^5.1.0",
     "firebase": "^11.6.0",
     "firebase-admin": "^13.2.0",
+    "firebase-functions": "^6.0.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   }
