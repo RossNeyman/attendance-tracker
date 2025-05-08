@@ -7,7 +7,7 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { QrScanner } from "./components/QrScanner";
 
 export function QrScannerPage() {
@@ -15,6 +15,8 @@ export function QrScannerPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [csiEmail, setCsiEmail] = useState("");
+  const { roomId, userId } = useParams<{ roomId: string, userId: string }>();
+
 
   const handleExit = () => {
     navigate("/");
@@ -67,9 +69,10 @@ export function QrScannerPage() {
               p: 2, // Add some padding inside the border
             }}
           >
-            {/* Render the QrScanner component HERE */}
-            {/* Its content (permission request) will appear inside this box */}
-            <QrScanner />
+            {/* Pass userId, roomId, and weekId as props to QrScanner */}
+            {userId && roomId && (
+              <QrScanner userId={userId} roomId={roomId}/>
+            )}
           </Box>
           <Typography
             variant="subtitle1"
@@ -90,7 +93,6 @@ export function QrScannerPage() {
               textAlign: "center",
               fontWeight: "BOLD",
               fontFamily: '"Special Gothic", san-serif',
-
             }}
           >
             Don't have a QR code yet? ..... Make One!
