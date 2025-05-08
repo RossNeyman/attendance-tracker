@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import db from "../db.ts";
+import db from "../db.js";
 
 const roomsRouter = express.Router();
 

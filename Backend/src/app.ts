@@ -1,10 +1,10 @@
 import express, { Application, Request, Response, NextFunction } from "express";
-import studentRouter from "./routes/studentRouter.ts";
-import logsRouter from "./routes/logsRouter.ts";
-import weeksRouter from "./routes/weeksRouter.ts";
-import roomsRouter from "./routes/roomsRouter.ts";
+import studentRouter from "./routes/studentRouter.js";
+import logsRouter from "./routes/logsRouter.js";
+import weeksRouter from "./routes/weeksRouter.js";
+import roomsRouter from "./routes/roomsRouter.js";
 import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "./swagger.config.ts";
+import { swaggerSpec } from "./swagger.config.js";
 
 const app: Application = express();
 
