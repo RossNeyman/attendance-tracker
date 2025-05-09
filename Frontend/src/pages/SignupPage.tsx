@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCreateUserMutation, user } from '../features/logsSlice';
 import { signup } from '../services/auth/login'
 
-export function Signup() {
+export function SignupPage() {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
