@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import NavBar from './components/NavBar';
+import NavBar from '../components/NavBar';
 import {
   Box,
   Typography,
@@ -13,7 +13,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { auth } from './config/firebaseConfig';
+import { auth } from '../config/firebaseConfig';
 import { 
   useGetActiveRoomsQuery, 
   useGetArchivedRoomsQuery, 
@@ -22,12 +22,12 @@ import {
   useDeleteRoomMutation, 
   useArchiveRoomMutation,
   useUnarchiveRoomMutation 
-} from './features/roomsSlice';
+} from '../features/roomsSlice';
 import { skipToken } from '@reduxjs/toolkit/query/react';
 import { useNavigate } from 'react-router-dom';
-import RoomCard from './components/RoomCard';
-import ArchivedRoomCard from './components/ArchivedRoomCard';
-import DogError from './components/dogError';
+import RoomCard from '../components/rooms/RoomCard';
+import ArchivedRoomCard from '../components/rooms/ArchivedRoomCard';
+import DogError from '../components/dogError';
 
 export function Home() {
   const theme = useTheme();

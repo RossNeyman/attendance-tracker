@@ -8,9 +8,9 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import { auth } from "./config/firebaseConfig";
+import { auth } from "../config/firebaseConfig";
 import { updateProfile, updateEmail, updatePassword } from "firebase/auth";
-import NavBar from "./components/NavBar";
+import NavBar from "../components/NavBar";
 
 export function AccountSettings() {
   const [firstName, setFirstName] = useState("");
