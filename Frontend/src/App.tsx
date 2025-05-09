@@ -5,15 +5,15 @@ import {
   Routes
 } from 'react-router-dom';
 
-import { QrScannerPage } from './QrScannerPage.tsx';
+import { QrScannerPage } from './pages/QrScannerPage.tsx';
 import { store } from './app/store';
-import { Login } from './Login.tsx';
-import { Home } from './Home.tsx';
-import { Signup } from './Signup.tsx';
-import { ForgotPassword } from './forgotPassword.tsx';
-import {ResetPassword} from './resetPassword.tsx';
-import Logs from './Logs.tsx';
-import { AccountSettings } from './accountSettings.tsx';
+import { Login } from './pages/Login.tsx';
+import { Home } from './pages/Home.tsx';
+import { Signup } from './pages/Signup.tsx';
+import { ForgotPassword } from './pages/forgotPassword.tsx';
+import {ResetPassword} from './pages/resetPassword.tsx';
+import Logs from './pages/Logs.tsx';
+import { AccountSettings } from './pages/accountSettings.tsx';
 
 function App() {
   return (

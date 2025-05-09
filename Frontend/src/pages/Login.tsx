@@ -1,5 +1,3 @@
-import React from 'react';
-import { useState } from 'react';
 import {
   Box,
   Container,
@@ -14,52 +12,28 @@ import {
   Paper,
   CssBaseline,
   GlobalStyles,
+  Alert,
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useNavigate } from 'react-router-dom';
-import { login } from './auth/login';
+import { useLoginLogic } from '../hooks/useLoginLogic';
 
 export function Login() {
-  const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false);
-
-  const handleTogglePasswordVisibility = (): void => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>): void => {
-    event.preventDefault();
-  };
-
-  const handleForgotLinkClick = (event: React.MouseEvent<HTMLAnchorElement>): void => {
-    event.preventDefault();
-    navigate('/forgot-password');
-  };
-
-  const handleCreateAccountClick = (event: React.MouseEvent<HTMLAnchorElement>): void => {
-    event.preventDefault();
-    alert('Navigating to account creation page');
-    navigate('/signup');
-  };
-
-  const handleStayLoggedInChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setStayLoggedIn(event.target.checked);
-  };
-
-  const handleLogin = async () => {
-    try {
-      const user = await login(username, password);
-      console.log('Logged in user:', user);
-      alert('Login successful!');
-      navigate('/home');
-    } catch (error) {
-      alert('Login failed. Please try again.' + error);
-    }
-  };
+  const {
+    showPassword,
+    username,
+    setUsername,
+    password,
+    setPassword,
+    stayLoggedIn,
+    loginError,
+    handleTogglePasswordVisibility,
+    handleMouseDownPassword,
+    handleForgotLinkClick,
+    handleCreateAccountClick,
+    handleStayLoggedInChange,
+    handleLogin,
+  } = useLoginLogic();
 
   return (
     <>
@@ -74,7 +48,6 @@ export function Login() {
           flexDirection: 'column',
         }}
       >
-        
         <Container
           maxWidth="sm"
           sx={{
@@ -111,10 +84,14 @@ export function Login() {
               <span style={{ color: '#cb2323' }}>Class</span>
               <span style={{ color: '#2374cb' }}>TAP</span>
             </Typography>
-            
 
             <Box sx={{ width: '100%', maxWidth: '400px' }}>
               <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, borderRadius: '8px' }}>
+                {loginError && (
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {loginError}
+                  </Alert>
+                )}
                 <Box sx={{ mb: 2 }}>
                   <Typography
                     variant="body1"

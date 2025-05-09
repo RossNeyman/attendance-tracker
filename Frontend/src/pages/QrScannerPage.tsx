@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -7,26 +6,22 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
-import { QrScanner } from "./components/QrScanner";
+import { QrScanner } from "../components/QrScanner";
+import { useQrScannerPageLogic } from "../hooks/useQrScannerPageLogic";
 
 export function QrScannerPage() {
-  const navigate = useNavigate();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [csiEmail, setCsiEmail] = useState("");
-  const { roomId, userId } = useParams<{ roomId: string, userId: string }>();
-
-
-  const handleExit = () => {
-    navigate("/");
-  };
-
-  const handleGenerateQrCode = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("Generating QR Code for:", { firstName, lastName, csiEmail });
-    alert(`A new QR code would be sent to ${csiEmail} (Implementation Needed)`);
-  };
+  const {
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    csiEmail,
+    setCsiEmail,
+    roomId,
+    userId,
+    handleExit,
+    handleGenerateQrCode,
+  } = useQrScannerPageLogic();
 
   return (
     <>
@@ -69,9 +64,8 @@ export function QrScannerPage() {
               p: 2, // Add some padding inside the border
             }}
           >
-            {/* Pass userId, roomId, and weekId as props to QrScanner */}
             {userId && roomId && (
-              <QrScanner userId={userId} roomId={roomId}/>
+              <QrScanner userId={userId} roomId={roomId} />
             )}
           </Box>
           <Typography

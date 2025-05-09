@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -9,42 +8,17 @@ import {
   CssBaseline,
   GlobalStyles,
 } from '@mui/material';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { getAuth, confirmPasswordReset } from 'firebase/auth';
+import { useForgotPasswordLogic } from '../hooks/useForgotPasswordLogic';
 
-export function ResetPassword() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [newPassword, setNewPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string>('');
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const auth = getAuth();
-    const oobCode = searchParams.get('oobCode'); 
-
-    if (!oobCode) {
-      setError('Invalid or missing reset code.');
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    try {
-      await confirmPasswordReset(auth, oobCode, newPassword);
-      setMessage('Your password has been successfully reset.');
-      setError('');
-      setTimeout(() => navigate('/'), 3000); 
-    } catch (err: any) {
-      setError(err.message || 'Failed to reset password. Please try again.');
-      setMessage('');
-    }
-  };
+export function ForgotPassword() {
+  const {
+    email,
+    setEmail,
+    message,
+    error,
+    handleSubmit,
+    handleBackToLogin,
+  } = useForgotPasswordLogic();
 
   return (
     <>
@@ -97,7 +71,7 @@ export function ResetPassword() {
               <span style={{ color: '#2374cb' }}>TAP</span>
             </Typography>
 
-            {/* Reset Password Form */}
+            {/* Forgot Password Form */}
             <Box
               component="form"
               onSubmit={handleSubmit}
@@ -113,7 +87,7 @@ export function ResetPassword() {
                     mb: 2,
                   }}
                 >
-                  Reset Password
+                  Forgot Password
                 </Typography>
                 <Typography
                   variant="body2"
@@ -124,50 +98,28 @@ export function ResetPassword() {
                     color: 'text.secondary',
                   }}
                 >
-                  Enter your new password below.
+                  Enter your email address below to reset your password.
                 </Typography>
 
-                {/* New Password Input */}
+                {/* Email Input */}
                 <Box sx={{ mb: 2 }}>
                   <Typography
                     variant="body1"
                     component="label"
-                    htmlFor="newPassword"
+                    htmlFor="email"
                     sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}
                   >
-                    New Password:
+                    Email Address:
                   </Typography>
                   <TextField
-                    id="newPassword"
-                    type="password"
+                    id="email"
+                    type="email"
                     variant="outlined"
                     size="small"
                     fullWidth
                     required
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-                </Box>
-
-                {/* Confirm Password Input */}
-                <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="body1"
-                    component="label"
-                    htmlFor="confirmPassword"
-                    sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}
-                  >
-                    Confirm Password:
-                  </Typography>
-                  <TextField
-                    id="confirmPassword"
-                    type="password"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </Box>
 
@@ -180,7 +132,19 @@ export function ResetPassword() {
                   size="large"
                   sx={{ py: 1.5, fontWeight: 'bold', textTransform: 'none', mb: 2 }}
                 >
-                  Reset Password
+                  Send Reset Link
+                </Button>
+
+                {/* Back to Login Button */}
+                <Button
+                  onClick={handleBackToLogin}
+                  variant="outlined"
+                  color="primary"
+                  fullWidth
+                  size="large"
+                  sx={{ py: 1.5, fontWeight: 'bold', textTransform: 'none' }}
+                >
+                  Back to Login
                 </Button>
 
                 {/* Success Message */}
@@ -219,4 +183,4 @@ export function ResetPassword() {
   );
 }
 
-export default ResetPassword;
+export default ForgotPassword;

@@ -13,8 +13,8 @@ import {
   GlobalStyles,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useCreateUserMutation, user } from './features/logsSlice';
-import { signup } from './auth/login'
+import { useCreateUserMutation, user } from '../features/logsSlice';
+import { signup } from '../services/auth/login'
 
 export function Signup() {
   const navigate = useNavigate();
