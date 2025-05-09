@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Container, Typography, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Select, Button } from '@mui/material';
-import { useGetRoomLogsQuery} from '../features/logsSlice';
-import { useGetWeeksQuery } from '../features/weeksSlice';
+import React from 'react';
+import { Container, Typography, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Select, Button, Alert } from '@mui/material';
 import NavBar from '../components/NavBar';
-import { skipToken } from '@reduxjs/toolkit/query/react';
+import { useLogsLogic } from '../hooks/useLogsLogic';
+import DogError from '../components/dogError';
 
 /*
  * Logs Component
@@ -12,88 +10,140 @@ import { skipToken } from '@reduxjs/toolkit/query/react';
  * It allows users to select a week and view the corresponding logs.
  */
 const Logs: React.FC = () => {
-    const { roomId, userId } = useParams<{ roomId: string, userId: string }>();
-    const [selectedWeek, setSelectedWeek] = useState<string>('');
-    const { data: weeks, isLoading: isWeeksLoading, error: isWeeksError, isSuccess: isWeeksSuccess } = useGetWeeksQuery({ userId: userId, roomId: roomId });
-    const { data: logs, error, isLoading, isSuccess } = useGetRoomLogsQuery(
-        selectedWeek ? { userId: userId, roomId: roomId, weekId: selectedWeek } : skipToken
-    );
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (isWeeksSuccess) {
-            setSelectedWeek(weeks[weeks.length - 1].id);
-            console.log(weeks);
-        }
-    }, [selectedWeek]);
-
-    useEffect(()=> {
-        if(error){
-            console.error("Error fetching logs:", error);
-            //Dog error component here
-        }
-        if(isWeeksError){
-            console.error("Error fetching weeks:", isWeeksError);
-            //Dog error component here
-        }
-    }, [error, isWeeksError])
+    const {
+        roomId,
+        selectedWeek,
+        weeks,
+        isWeeksLoading,
+        weeksError,
+        isWeeksSuccess,
+        logs,
+        logsError,
+        isLogsLoading,
+        isLogsSuccess,
+        handleWeekChange,
+        navigateToScanner,
+    } = useLogsLogic();
 
     if (isWeeksLoading) {
-        return <CircularProgress />;
+        return (
+            <>
+                <NavBar />
+                <Container sx={{ textAlign: 'center', mt: 4 }}>
+                    <CircularProgress />
+                    <Typography sx={{ mt: 2 }}>Loading weeks...</Typography>
+                </Container>
+            </>
+        );
     }
 
-    if (isWeeksSuccess) {
+    if (weeksError) {
+        return (
+            <>
+                <NavBar />
+                <Container>
+                    <DogError/>
+                    <Alert severity="error" sx={{ mt: 2 }}>
+                        Error loading weeks: {weeksError.message || 'An unknown error occurred.'}
+                    </Alert>
+                </Container>
+            </>
+        );
+    }
+
+    if (logsError) {
+        return (
+            <>
+                <NavBar />
+                <Container>
+                    <DogError />
+                    <Alert severity="error" sx={{ mt: 2 }}>
+                        Error loading logs: {logsError.message || 'An unknown error occurred.'}
+                    </Alert>
+                </Container>
+            </>
+        );
+    }
+
+    if (isWeeksSuccess && weeks) {
         const weekIds = weeks.map((week: any) => week.id);
         return (
-            <Container>
+            <>
                 <NavBar />
-                <Button onClick={() => {navigate(`/scanner/${userId}/${roomId}`)}}>
-                    Use device as scanner for this room
-                </Button>
-                <Typography variant="h4" gutterBottom>
-                    Attendance Logs for Room {roomId}
-                </Typography>
-                <Typography variant="subtitle1" gutterBottom>
-                    Select a week to view attendance logs:
-                </Typography>
-                <Select
-                    value={selectedWeek}
-                    fullWidth
-                    style={{ marginBottom: '20px' }}
-                    onChange={(e) => setSelectedWeek(e.target.value)}
-                >
-                    {weekIds.map((weekId: string) => (
-                        <MenuItem key={weekId} value={weekId}>
-                            {weekId}
-                        </MenuItem>
-                    ))}
-                </Select>
-                {isLoading ? (
-                    <CircularProgress />
-                ) : (isSuccess) ? ( logs.length>0 ? (
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Date</TableCell>
-                                <TableCell>Attendees</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {logs.map((log: any) => (
-                                <TableRow key={log.id}>
-                                    <TableCell>{log.timestamp}</TableCell>
-                                    <TableCell>{log.email}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                ) : (
-                    <Typography>No logs available for this week.</Typography>
-                )): (
-                    <Typography>Please select a week to view logs</Typography>
-                )}
-            </Container>
+                <Container>
+                    <Button onClick={navigateToScanner} variant="contained" sx={{ my: 2 }}>
+                        Use device as scanner for this room
+                    </Button>
+                    <Typography variant="h4" gutterBottom>
+                        Attendance Logs for Room {roomId}
+                    </Typography>
+                    {weeks.length === 0 ? (
+                        <Typography>No weeks available for this room.</Typography>
+                    ) : (
+                        <>
+                            <Typography variant="subtitle1" gutterBottom>
+                                Select a week to view attendance logs:
+                            </Typography>
+                            <Select
+                                value={selectedWeek}
+                                fullWidth
+                                style={{ marginBottom: '20px' }}
+                                onChange={handleWeekChange}
+                                displayEmpty
+                            >
+                                {weekIds.map((weekId: string) => (
+                                    <MenuItem key={weekId} value={weekId}>
+                                        Week ID: {weekId}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </>
+                    )}
+
+                    {isLogsLoading ? (
+                        <CircularProgress />
+                    ) : selectedWeek && isLogsSuccess && logs ? (
+                        logs.length > 0 ? (
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Date/Time</TableCell>
+                                        <TableCell>Attendee Email</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {logs.map((log: any) => (
+                                        <TableRow key={log.id}>
+                                            <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                                            <TableCell>{log.email}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        ) : (
+                            <Typography>No logs available for this week.</Typography>
+                        )
+                    ) : selectedWeek ? (
+                        <Typography>Loading logs for selected week...</Typography>
+                    ) : (
+                        !isWeeksLoading &&
+                        weeks &&
+                        weeks.length > 0 && (
+                            <Typography>Please select a week to view logs.</Typography>
+                        )
+                    )}
+                </Container>
+            </>
         );
-    };
-}
+    }
+
+    return (
+        <>
+            <NavBar />
+            <Container sx={{ textAlign: 'center', mt: 4 }}>
+                <Typography>Something went wrong.</Typography>
+            </Container>
+        </>
+    );
+};
 export default Logs;

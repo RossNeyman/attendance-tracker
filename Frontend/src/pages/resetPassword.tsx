@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -9,42 +8,18 @@ import {
   CssBaseline,
   GlobalStyles,
 } from '@mui/material';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { getAuth, confirmPasswordReset } from 'firebase/auth';
+import { useResetPasswordLogic } from '../hooks/useResetPasswordLogic';
 
 export function ResetPassword() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [newPassword, setNewPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string>('');
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const auth = getAuth();
-    const oobCode = searchParams.get('oobCode'); 
-
-    if (!oobCode) {
-      setError('Invalid or missing reset code.');
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    try {
-      await confirmPasswordReset(auth, oobCode, newPassword);
-      setMessage('Your password has been successfully reset.');
-      setError('');
-      setTimeout(() => navigate('/'), 3000); 
-    } catch (err: any) {
-      setError(err.message || 'Failed to reset password. Please try again.');
-      setMessage('');
-    }
-  };
+  const {
+    newPassword,
+    setNewPassword,
+    confirmPassword,
+    setConfirmPassword,
+    message,
+    error,
+    handleSubmit,
+  } = useResetPasswordLogic();
 
   return (
     <>
@@ -146,6 +121,7 @@ export function ResetPassword() {
                     required
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
+                    helperText="Password should be at least 6 characters."
                   />
                 </Box>
 
