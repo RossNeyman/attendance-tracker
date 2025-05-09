@@ -19,7 +19,7 @@ import {
 import { skipToken } from '@reduxjs/toolkit/query/react';
 import RoomCard from '../components/rooms/RoomCard';
 import ArchivedRoomCard from '../components/rooms/ArchivedRoomCard';
-import DogError from '../components/dogError';
+import DogError from '../components/DogError';
 import { useHomeLogic } from '../hooks/useHomeLogic';
 
 export function Home() {

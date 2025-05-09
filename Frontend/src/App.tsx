@@ -7,13 +7,13 @@ import {
 
 import { QrScannerPage } from './pages/QrScannerPage.tsx';
 import { store } from './app/store';
-import { Login } from './pages/Login.tsx';
-import { Home } from './pages/Home.tsx';
-import { Signup } from './pages/Signup.tsx';
-import { ForgotPassword } from './pages/forgotPassword.tsx';
-import {ResetPassword} from './pages/resetPassword.tsx';
-import Logs from './pages/Logs.tsx';
-import { AccountSettings } from './pages/accountSettings.tsx';
+import { Login } from './pages/LoginPage.tsx';
+import { Home } from './pages/HomePage.tsx';
+import { SignupPage } from './pages/SignupPage.tsx';
+import { ForgotPassword } from './pages/ForgotPasswordPage.tsx';
+import {ResetPassword} from './pages/ResetPasswordPage.tsx';
+import Logs from './pages/ShowLogsForRoomPage.tsx';
+import { AccountSettings } from './pages/AccountSettingsPage.tsx';
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/scanner/:userId/:roomId" element={<QrScannerPage />} />
           <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/signup" element={<SignupPage />} />
           <Route path="/home" element={<Home />} />
           <Route path="/logs/:roomId/:userId" element={<Logs />} />
         </Routes>

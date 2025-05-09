@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import { QrScanner } from "../components/QrScanner";
-import { useQrScannerPageLogic } from "../hooks/useQrScannerPageLogic";
+import { useQrScannerPageLogic } from "../hooks/useQrScannerLogic";
 
 export function QrScannerPage() {
   const {

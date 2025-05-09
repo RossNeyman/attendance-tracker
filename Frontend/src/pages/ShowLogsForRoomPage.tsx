@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Typography, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Select, Button, Alert } from '@mui/material';
 import NavBar from '../components/NavBar';
 import { useLogsLogic } from '../hooks/useLogsLogic';
-import DogError from '../components/dogError';
+import DogError from '../components/DogError';
 
 /*
  * Logs Component
