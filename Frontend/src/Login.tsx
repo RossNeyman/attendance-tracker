@@ -18,7 +18,7 @@ import {
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
-import { login } from './auth/login';
+import { login } from './services/auth/login';
 
 export function Login() {
   const navigate = useNavigate();

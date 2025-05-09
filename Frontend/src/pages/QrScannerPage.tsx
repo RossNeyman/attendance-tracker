@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { QrScanner } from "./components/QrScanner";
+import { QrScanner } from "../components/QrScanner";
 
 export function QrScannerPage() {
   const navigate = useNavigate();
