@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -8,66 +7,24 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import { auth } from "../config/firebaseConfig";
-import { updateProfile, updateEmail, updatePassword } from "firebase/auth";
 import NavBar from "../components/NavBar";
+import { useAccountSettingsLogic } from "../hooks/useAccountSettingsLogic";
 
 export function AccountSettings() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      setFirstName(user.displayName?.split(" ")[0] || "");
-      setLastName(user.displayName?.split(" ")[1] || "");
-      setEmail(user.email || "");
-    }
-  }, []);
-
-  const handleSaveChanges = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setLoading(true);
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    try {
-      const user = auth.currentUser;
-      if (!user) {
-        throw new Error("No user logged in.");
-      }
-
-      if (firstName || lastName) {
-        const displayName = `${firstName} ${lastName}`;
-        await updateProfile(user, { displayName: displayName.trim() });
-      }
-
-      if (email !== user.email) {
-        await updateEmail(user, email);
-        setSuccessMessage(
-          "Email updated successfully. Please verify your new email address."
-        );
-      }
-
-      if (password) {
-        await updatePassword(user, password);
-        setSuccessMessage("Password updated successfully.");
-      }
-
-      setSuccessMessage("Your account settings have been updated successfully.");
-    } catch (error: any) {
-      console.error("Error updating profile:", error);
-      setErrorMessage(error.message || "Failed to update profile.");
-    } finally {
-      setLoading(false);
-      setPassword("");
-    }
-  };
+  const {
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    successMessage,
+    errorMessage,
+    loading,
+    handleSaveChanges,
+  } = useAccountSettingsLogic();
 
   return (
     <>
