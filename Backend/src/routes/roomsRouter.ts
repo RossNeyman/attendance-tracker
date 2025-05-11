@@ -95,6 +95,25 @@ roomsRouter.post('/archive', async (req: Request, res: Response): Promise<any> =
     }
 })
 
+roomsRouter.post('/unarchive', async (req: Request, res: Response): Promise<any> => {
+    try{
+        const { userId, roomId } = req.body;
+        if (!userId || !roomId) {
+            return res.status(400).json({ error: "Missing userId or roomId parameter." });
+        }
+        const userDocRef = db.collection("/Users").doc(userId as string);
+        const roomsRef = userDocRef.collection("rooms");
+        const roomDocRef = roomsRef.doc(roomId as string);
+        await roomDocRef.update({ archived: false });
+        res.status(200).json({ message: "Room unarchived successfully." });
+    }
+    catch (error) {
+        console.error("Error unarchiving room:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+}
+);
+
 roomsRouter.delete('/', async (req: Request, res: Response): Promise<any> => {
     try {  
         const { userId, roomId } = req.body;
