@@ -2,7 +2,11 @@ import {getFirestore} from "firebase-admin/firestore";
 import {initializeApp, applicationDefault, cert} from "firebase-admin/app";
 import {ServiceAccount} from "firebase-admin";
 import {getAuth} from "firebase-admin/auth";
-import serviceAccount from "../serviceAccountKey.json" with {type: "json"};
+import * as fs from 'fs';
+
+const serviceAccount = JSON.parse(
+  fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS || '', 'utf8')
+);
 
 initializeApp({credential: cert(serviceAccount as ServiceAccount)});
 
