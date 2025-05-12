@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Container,
@@ -12,46 +12,26 @@ import {
   CssBaseline,
   GlobalStyles,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useCreateUserMutation, user } from '../features/logsSlice';
-import { signup } from '../services/auth/login'
+import { useSignupLogic } from '../hooks/useSignupLogic';
 
 export function SignupPage() {
-  const navigate = useNavigate();
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [stayLoggedIn, setStayLoggedIn] = useState<boolean>(false);
-  const [createUser] = useCreateUserMutation();
-
-  const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return;
-    }
-    try {
-      await signup(email, password).then((userCredential) => {
-        const user: user = {
-          userId: userCredential.uid,
-          first_name: firstName,
-          last_name: lastName,
-          email: email,
-        };
-        return createUser({user});
-      });
-      navigate('/home');
-    } catch (error) {
-      alert('Signup failed. Please try again.' + error);
-    }
-  };
-
-  const handleLoginLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    navigate('/');
-  };
+  const {
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    stayLoggedIn,
+    setStayLoggedIn,
+    signupError,
+    handleSignup,
+    handleLoginLinkClick,
+  } = useSignupLogic();
 
   return (
     <>
@@ -111,6 +91,13 @@ export function SignupPage() {
               sx={{ width: '100%', maxWidth: '400px' }}
             >
               <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, borderRadius: '8px' }}>
+                {/* Display Signup Error */}
+                {signupError && (
+                  <Typography color="error" variant="body2" sx={{ mb: 2, textAlign: 'center' }}>
+                    {signupError}
+                  </Typography>
+                )}
+
                 {/* Email */}
                 <Box sx={{ mb: 2 }}>
                   <Typography
