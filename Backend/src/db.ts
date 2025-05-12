@@ -1,27 +1,25 @@
-import {getFirestore} from "firebase-admin/firestore";
-import {initializeApp, applicationDefault, cert} from "firebase-admin/app";
-import {ServiceAccount} from "firebase-admin";
-import {getAuth} from "firebase-admin/auth";
-import serviceAccount from "../serviceAccountKey.json" with {type: "json"};
+import admin from 'firebase-admin';
+import { getFirestore } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
 
-initializeApp({credential: cert(serviceAccount as ServiceAccount)});
-
-//Export singleton db connection
-const db = getFirestore(); 
+admin.initializeApp();
+const db = getFirestore();
 export default db;
 
 //TODO - IMPLEMENT TOKEN VERIFICATION ON REQUESTS
 export async function verifyToken(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ error: 'Unauthorized' });
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized - No token provided or malformed' });
     }
+    const token = authHeader.split(' ')[1];
 
     try {
-        const decodedToken = await getAuth().verifyIdToken(token); // Use getAuth() here
+        const decodedToken = await getAuth().verifyIdToken(token);
         req.user = decodedToken;
         next();
     } catch (error) {
+        console.error('Error verifying token:', error);
         return res.status(401).json({ error: 'Invalid token' });
     }
 }
