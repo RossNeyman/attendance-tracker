@@ -50,7 +50,7 @@ export function SignupPage() {
 
   const handleLoginLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    navigate('/login');
+    navigate('/');
   };
 
   return (
