@@ -20,8 +20,8 @@ app.use("/rooms", roomsRouter)
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //This is from a tutorial, now it's used to test
-app.use("/", (req: Request, res: Response, next: NextFunction): void => {
-    res.json({ message: "Allo! Catch-all route." });
-});
+// app.use("/", (req: Request, res: Response, next: NextFunction): void => {
+//     res.json({ message: "Allo! Catch-all route." });
+// });
 
 export default app;
