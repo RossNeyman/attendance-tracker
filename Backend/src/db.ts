@@ -1,8 +1,31 @@
+import 'dotenv/config';
 import admin from 'firebase-admin';
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 
-admin.initializeApp();
+const serviceAccountContent = process.env.SERVICE_ACCOUNT_CONTENT;
+
+if (serviceAccountContent) {
+  try {
+    const serviceAccount = JSON.parse(serviceAccountContent);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log("Firebase Admin SDK initialized with service account content from environment variable.");
+  } catch (error) {
+    console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT_CONTENT or initialize Firebase:", error);
+    // Fallback or throw error if critical
+    // For example, you might try the default initialization if GOOGLE_APPLICATION_CREDENTIALS is still a valid fallback
+    admin.initializeApp(); 
+  }
+} else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  // Fallback to initializeApp if GOOGLE_APPLICATION_CREDENTIALS (path) is set and the content variable isn't
+  admin.initializeApp();
+  console.log("Firebase Admin SDK initialized using GOOGLE_APPLICATION_CREDENTIALS path.");
+} else {
+  console.error("Firebase Admin SDK initialization failed: No credentials provided in environment variables.");
+}
+
 const db = getFirestore();
 export default db;
 
