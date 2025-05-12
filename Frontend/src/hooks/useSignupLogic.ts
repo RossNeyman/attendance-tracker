@@ -85,7 +85,7 @@ export const useSignupLogic = (): SignupLogicReturn => {
 
   const handleLoginLinkClick = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    navigate('/login');
+    navigate('/');
   }, [navigate]);
 
   return {
