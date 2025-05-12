@@ -1,31 +1,50 @@
-import {getFirestore} from "firebase-admin/firestore";
-import {initializeApp, applicationDefault, cert} from "firebase-admin/app";
-import {ServiceAccount} from "firebase-admin";
-import {getAuth} from "firebase-admin/auth";
-import * as fs from 'fs';
+//import path from 'path';
+//import dotenv from 'dotenv';
+//import { fileURLToPath } from 'url';
+import admin from 'firebase-admin';
+import { getFirestore } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
 
-const serviceAccount = JSON.parse(
-  fs.readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS || '', 'utf8')
-);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
-initializeApp({credential: cert(serviceAccount as ServiceAccount)});
+// const dotenvResult = dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
+// if (dotenvResult.error) {
+//   console.error('Error loading .env file:', dotenvResult.error);
+// }
+
+// try {
+//   if (!admin.apps.length) {
+//     admin.initializeApp();
+//     console.log('Firebase Admin SDK initialized successfully.');
+//   } else {
+//     admin.app(); 
+//     console.log('Firebase Admin SDK already initialized.');
+//   }
+// } catch (error) {
+//   console.error('Error initializing Firebase Admin SDK:', error);
+//   console.error('GOOGLE_APPLICATION_CREDENTIALS at error:', process.env.GOOGLE_APPLICATION_CREDENTIALS);
+// }
+admin.initializeApp();
 //Export singleton db connection
-const db = getFirestore(); 
+const db = getFirestore();
 export default db;
 
 //TODO - IMPLEMENT TOKEN VERIFICATION ON REQUESTS
 export async function verifyToken(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ error: 'Unauthorized' });
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized - No token provided or malformed' });
     }
+    const token = authHeader.split(' ')[1];
 
     try {
-        const decodedToken = await getAuth().verifyIdToken(token); // Use getAuth() here
+        const decodedToken = await getAuth().verifyIdToken(token);
         req.user = decodedToken;
         next();
     } catch (error) {
+        console.error('Error verifying token:', error);
         return res.status(401).json({ error: 'Invalid token' });
     }
 }
