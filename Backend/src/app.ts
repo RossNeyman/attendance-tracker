@@ -9,7 +9,6 @@ import { swaggerSpec } from "./swagger.config.js";
 const app: Application = express();
 
 app.use(cors());
-// Makes sure that the server can parse JSON data in requests (figured this one out after about 2 hours)
 app.use(express.json());
 
 //directs the requests to the correct router based on the URL path
