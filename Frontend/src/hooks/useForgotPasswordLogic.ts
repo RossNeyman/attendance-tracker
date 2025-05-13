@@ -13,6 +13,18 @@ interface ForgotPasswordLogic {
   handleBackToLogin: () => void;
 }
 
+
+/**
+ * @module useForgotPasswordLogic
+ * @description Custom hook to manage the logic for the forgot password feature.
+ * It handles user input for email, sends a password reset email using Firebase
+ * Authentication, and manages feedback messages (success or error).
+ *
+ * @returns {ForgotPasswordLogic} An object containing state variables for the email,
+ * success message, error message, their respective setter functions,
+ * a `handleSubmit` function to initiate the password reset process,
+ * and a `handleBackToLogin` function to navigate back to the login page.
+ */
 export const useForgotPasswordLogic = (): ForgotPasswordLogic => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');

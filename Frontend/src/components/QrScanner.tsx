@@ -3,7 +3,53 @@ import { Html5Qrcode } from 'html5-qrcode';
 import { Box, Typography, Button, Alert, Paper } from '@mui/material';
 import { useLogAttendanceMutation } from '../features/logsSlice';
 
-
+/**
+ * `QrScanner` is a React component that provides a user interface for scanning QR codes.
+ * It utilizes the `html5-qrcode` library to access the device's camera and decode QR codes.
+ * The component displays the scanned result, handles errors during scanning, and shows success messages.
+ * It also includes functionality to start and stop the scanner, and to save the scanned data (expected to be an email)
+ * to a backend service using the `useLogAttendanceMutation` hook.
+ *
+ * @param {object} props - The properties passed to the component.
+ * @param {string} props.userId - The ID of the user initiating the scan. This is used when logging attendance.
+ * @param {string} props.roomId - The ID of the room for which attendance is being logged. This is used when logging attendance.
+ * @returns {JSX.Element} The QrScanner component.
+ *
+ * @example
+ * ```tsx
+ * <QrScanner userId="user123" roomId="room456" />
+ * ```
+ *
+ * @remarks
+ * The component manages several states:
+ * - `scanResult`: Stores the decoded text from the QR code.
+ * - `error`: Stores any error messages encountered during scanning or backend communication.
+ * - `success`: Stores success messages, typically after successfully saving scan data.
+ * - `isScanning`: A boolean indicating whether the scanner is currently active.
+ *
+ * It uses a `useRef` (`scannerRef`) to hold the instance of `Html5Qrcode`.
+ * The QR code reader UI is rendered within a `div` element with the ID `qr-reader`.
+ *
+ * **Functionality:**
+ * - **Start Scanning:** Initializes the `Html5Qrcode` instance, requests camera access, and starts the scanning process.
+ *   It looks for the first available camera.
+ * - **Stop Scanning:** Stops the active scanner and clears its resources. This is also called on component unmount.
+ * - **QR Code Validation:** Checks if the scanned text is a valid email address using a regex.
+ * - **Save to Backend:** On a successful and valid scan, it calls `logAttendance` mutation to send the `userId`, `roomId`,
+ *   and the scanned `email` to the backend.
+ * - **UI Elements:**
+ *   - Displays error messages using an `Alert` component.
+ *   - Displays success messages using an `Alert` component.
+ *   - Shows the scanned result or "No result yet".
+ *   - Renders a `div` where the camera feed and QR scanner UI will be injected by `html5-qrcode`.
+ *   - Provides a button to "Start Scanning" or "Stop Scanning" based on the current state.
+ *
+ * **Dependencies:**
+ * - `react` (useEffect, useRef, useState)
+ * - `html5-qrcode`
+ * - `@mui/material` (Box, Typography, Button, Alert, Paper)
+ * - `../features/logsSlice` (useLogAttendanceMutation)
+ */
 export function QrScanner({ userId, roomId }: { userId: string; roomId: string }) {
     const [scanResult, setScanResult] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);

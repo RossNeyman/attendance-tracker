@@ -14,6 +14,18 @@ interface ResetPasswordLogicReturn {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
+/**
+ * @module useResetPasswordLogic
+ * @description Custom hook to manage the logic for resetting a user's password.
+ * It handles user input for new password and confirmation, validates the inputs,
+ * and interacts with Firebase Authentication to reset the password using a provided
+ * reset code from the URL parameters.
+ *
+ * @returns {ResetPasswordLogicReturn} An object containing state variables for
+ * new password, confirmation password, success message, error message,
+ * their respective setter functions, and a `handleSubmit` function to
+ * initiate the password reset process.
+ */
 export const useResetPasswordLogic = (): ResetPasswordLogicReturn => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

@@ -20,6 +20,25 @@ interface UseHomeLogicProps {
   authInstance?: Auth; 
 }
 
+/**
+ * @module useHomeLogic
+ * @description Custom hook to manage the logic for the home page, including user authentication,
+ * room creation, modification, deletion, archiving, unarchiving, and navigation.
+ * It integrates with Firebase for authentication and uses RTK Query mutations for room operations.
+ *
+ * @param {UseHomeLogicProps} props - The properties required by the hook, including state setters
+ * for new room name, operation errors, visible archived count, and refetch functions for active and archived rooms.
+ *
+ * @returns {object} An object containing:
+ *  - `userId`: The current authenticated user's ID, or null if not authenticated.
+ *  - `handleAddRoom`: Function to create a new room.
+ *  - `handleRoomClick`: Function to navigate to a specific room's logs.
+ *  - `handleRoomNameChange`: Function to update the name of an existing room.
+ *  - `handleSeeMoreArchived`: Function to load more archived rooms.
+ *  - `handleArchiveRoom`: Function to archive an active room.
+ *  - `handleUnarchiveRoom`: Function to unarchive a room.
+ *  - `handleDeleteRoom`: Function to delete a room.
+ */
 export const useHomeLogic = ({
   newRoomName,
   setNewRoomName,
