@@ -18,6 +18,11 @@ interface ArchivedRoomCardProps {
   onUnarchive: (roomId: string) => void;
 }
 
+/**
+ * ArchivedRoomCard component displays an archived room with an icon and a button to unarchive it.
+ * @param {ArchivedRoomCardProps} props - The properties for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
 const ArchivedRoomCard: React.FC<ArchivedRoomCardProps> = ({
   room,
   onRoomClick,

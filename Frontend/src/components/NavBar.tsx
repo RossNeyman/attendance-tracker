@@ -1,9 +1,31 @@
-// src/components/NavBar.tsx
-
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 
+/**
+ * `NavBar` is a React functional component that renders the application's navigation bar.
+ * It features a two-tiered design:
+ * - The top section displays the application logo ("ClassTAP") with a white background.
+ * - The bottom section contains navigation links ("Home", "Account Settings") and a "Log Out" button,
+ *   all set against a dark background.
+ *
+ * The component uses Material-UI components for styling and layout (`AppBar`, `Toolbar`, `Typography`, `Button`, `Box`).
+ * It utilizes `react-router-dom` for client-side navigation (`Link`, `useNavigate`).
+ *
+ * **Functionality:**
+ * - **Logo:** Clicking the logo navigates the user to the "/home" route.
+ * - **Navigation Links:**
+ *   - "Home": Navigates to the "/home" route.
+ *   - "Account Settings": Navigates to the "/account" route.
+ * - **Log Out Button:**
+ *   - Logs a message to the console.
+ *   - Displays an alert confirming logout.
+ *   - Navigates the user to the root route ("/") upon clicking.
+ *
+ * The `NavBar` is designed to be sticky at the top of the viewport.
+ *
+ * @returns {JSX.Element} The rendered navigation bar component.
+ */
 const NavBar: React.FC = () => {
     const navigate = useNavigate();
 

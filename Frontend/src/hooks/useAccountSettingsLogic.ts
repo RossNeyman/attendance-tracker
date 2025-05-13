@@ -18,6 +18,18 @@ interface AccountSettingsLogic {
   currentUser: User | null;
 }
 
+
+/**
+ * @module useAccountSettingsLogic
+ * @description Custom hook to manage user account settings logic, including fetching
+ * current user data and handling updates to profile information (name, email, password)
+ * using Firebase Authentication.
+ *
+ * @returns {AccountSettingsLogic} An object containing state variables for user details
+ * (firstName, lastName, email, password), their respective setter functions,
+ * loading status, success/error messages, the current Firebase user object,
+ * and a function `handleSaveChanges` to persist changes.
+ */
 export const useAccountSettingsLogic = (): AccountSettingsLogic => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

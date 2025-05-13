@@ -14,6 +14,16 @@ interface QrScannerPageLogicReturn {
   handleGenerateQrCode: (event: React.FormEvent<HTMLFormElement>) => Promise<void>; 
 }
 
+/**
+ * @module useQrScannerPageLogic
+ * @description Custom hook to manage the logic for the QR scanner page.
+ * It handles state for user details (first name, last name, email) and provides
+ * functions to exit the page and generate a QR code.
+ *
+ * @returns {QrScannerPageLogicReturn} An object containing state variables (firstName,
+ * lastName, csiEmail), their respective setter functions, roomId, userId,
+ * and handler functions for exiting the page and generating a QR code.
+ */
 export const useQrScannerPageLogic = (): QrScannerPageLogicReturn => {
   const navigate = useNavigate();
   const { roomId, userId } = useParams<{ roomId: string; userId: string }>();

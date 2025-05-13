@@ -1,19 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetRoomLogsQuery } from '../features/logsSlice'; // Adjust path as necessary
-import { useGetWeeksQuery } from '../features/weeksSlice'; // Adjust path as necessary
+import { useGetRoomLogsQuery } from '../features/logsSlice'; 
+import { useGetWeeksQuery } from '../features/weeksSlice'; 
 import { skipToken } from '@reduxjs/toolkit/query/react';
 
 interface Log {
     id: string;
     timestamp: string;
     email: string;
-    // Add other log properties if any
 }
 
 interface Week {
     id: string;
-    // Add other week properties if any, e.g., week_name, start_date
 }
 
 interface LogsLogicReturn {
@@ -23,16 +21,30 @@ interface LogsLogicReturn {
     setSelectedWeek: React.Dispatch<React.SetStateAction<string>>;
     weeks: Week[] | undefined;
     isWeeksLoading: boolean;
-    weeksError: any; // Consider using a more specific error type
+    weeksError: any; 
     isWeeksSuccess: boolean;
     logs: Log[] | undefined;
-    logsError: any; // Consider using a more specific error type
+    logsError: any; 
     isLogsLoading: boolean;
     isLogsSuccess: boolean;
-    handleWeekChange: (event: any) => void; // Adjust 'any' based on SelectChangeEvent if using MUI v5+
+    handleWeekChange: (event: any) => void; 
     navigateToScanner: () => void;
 }
 
+/**
+ * @module useLogsLogic
+ * @description Custom hook to manage the logic for displaying and filtering attendance logs for a specific room.
+ * It fetches available weeks for a given user and room, allows selection of a week,
+ * and then fetches the corresponding logs. It also provides navigation to a scanner page.
+ *
+ * @returns {LogsLogicReturn} An object containing:
+ * - `roomId`, `userId`: Identifiers for the current room and user from URL parameters.
+ * - `selectedWeek`, `setSelectedWeek`: State for the currently selected week ID and its setter.
+ * - `weeks`, `isWeeksLoading`, `weeksError`, `isWeeksSuccess`: Data, loading state, error, and success status for fetching weeks.
+ * - `logs`, `isLogsLoading`, `logsError`, `isLogsSuccess`: Data, loading state, error, and success status for fetching logs for the selected week.
+ * - `handleWeekChange`: Callback function to update the `selectedWeek` based on user input.
+ * - `navigateToScanner`: Callback function to navigate to the scanner page for the current user and room.
+ */
 export const useLogsLogic = (): LogsLogicReturn => {
     const { roomId, userId } = useParams<{ roomId: string; userId: string }>();
     const navigate = useNavigate();
@@ -56,15 +68,12 @@ export const useLogsLogic = (): LogsLogicReturn => {
 
     useEffect(() => {
         if (isWeeksSuccess && weeks && weeks.length > 0 && !selectedWeek) {
-            // Automatically select the most recent week (assuming last in array is most recent)
+            // Automatically select the most recent week (last in array is most recent)
             setSelectedWeek(weeks[weeks.length - 1].id);
         }
     }, [isWeeksSuccess, weeks, selectedWeek]);
 
-    // Error logging can remain in the component or be handled here
-    // For simplicity, we'll let the component handle displaying errors
-
-    const handleWeekChange = useCallback((event: any) => { // Adjust 'any'
+    const handleWeekChange = useCallback((event: any) => { 
         setSelectedWeek(event.target.value as string);
     }, []);
 

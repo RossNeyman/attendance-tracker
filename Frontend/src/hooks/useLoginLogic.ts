@@ -20,6 +20,20 @@ interface LoginLogic {
   handleLogin: () => Promise<void>;
 }
 
+/**
+ * @module useLoginLogic
+ * @description Custom hook to manage the logic for the login form.
+ * It handles state for username, password, password visibility, and the "stay logged in" option.
+ * It also provides functions for handling user interactions like toggling password visibility,
+ * navigating to forgot password or signup pages, and performing the login operation
+ * using Firebase Authentication with configurable session persistence.
+ *
+ * @returns {LoginLogic} An object containing state variables (showPassword, username,
+ * password, stayLoggedIn, loginError), their respective setter functions, and handler
+ * functions for various login-related actions (handleTogglePasswordVisibility,
+ * handleMouseDownPassword, handleForgotLinkClick, handleCreateAccountClick,
+ * handleStayLoggedInChange, handleLogin).
+ */
 export const useLoginLogic = (): LoginLogic => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
