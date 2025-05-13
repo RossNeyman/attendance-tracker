@@ -36,6 +36,7 @@ import DogError from '../components/DogError';
  * <Logs />
  * ```
  */
+//TODO: Change the name of this component and its associations to a more descriptive name
 const Logs: React.FC = () => {
     const {
         roomId,
