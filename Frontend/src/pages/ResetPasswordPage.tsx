@@ -10,6 +10,24 @@ import {
 } from '@mui/material';
 import { useResetPasswordLogic } from '../hooks/useResetPasswordLogic';
 
+/**
+ * `ResetPassword` component renders the user interface for the reset password functionality.
+ * It allows users to enter a new password and confirm it.
+ *
+ * This component utilizes the `useResetPasswordLogic` hook to manage its state,
+ * including the new password, confirmation password, success/error messages,
+ * and form submission logic.
+ *
+ * The UI includes:
+ * - A logo ("ClassTAP").
+ * - A form with new password and confirm password input fields.
+ * - A "Reset Password" button to submit the form.
+ * - Display areas for success or error messages returned from the reset password process.
+ *
+ * It uses Material-UI components for styling and layout, ensuring a responsive design.
+ *
+ * @returns {JSX.Element} The rendered reset password page.
+ */
 export function ResetPassword() {
   const {
     newPassword,

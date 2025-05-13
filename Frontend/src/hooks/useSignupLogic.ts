@@ -23,6 +23,13 @@ interface SignupLogicReturn {
   handleLoginLinkClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
+/**
+ * @module useSignupLogic
+ * @description Custom hook to manage the logic for the signup form.
+ * It handles state for user details (first name, last name, email, password, confirm password),
+ * the "stay logged in" option, and any signup errors. It also provides functions for handling
+ * user interactions like signing up and navigating to the login page.
+ */
 export const useSignupLogic = (): SignupLogicReturn => {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState<string>('');

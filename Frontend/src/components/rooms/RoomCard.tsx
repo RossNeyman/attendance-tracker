@@ -24,6 +24,11 @@ interface RoomCardProps {
   onNameChange: (oldName: string, newName: string) => void;
 }
 
+/**
+ * RoomCard component displays a room with an icon, name, and action buttons.
+ * @param {RoomCardProps} props - The properties for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
 const RoomCard: React.FC<RoomCardProps> = ({
   room,
   onRoomClick,

@@ -1,15 +1,6 @@
 import https from "firebase-functions/v2/https";
-//import { onInit } from "firebase-functions";
 import app from "./app.js";
 
-
-//8000 is the default port, unless otherwise specified in the environment variables
-// const PORT = process.env.PORT || 8080;
-// app.listen(PORT, (): void => console.log(`running on port ${PORT}`));
-
-// let initiliazedBackend;
-// onInit(async () => {
-//   initiliazedBackend = await https.onRequest(app);
-// });
-
+//no need to use app.listen() because firebase functions will handle that
+//don't need to set a port otherwise it will throw an error
 export const backend = https.onRequest(app);

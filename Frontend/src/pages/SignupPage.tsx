@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   Container,
@@ -14,6 +13,26 @@ import {
 } from '@mui/material';
 import { useSignupLogic } from '../hooks/useSignupLogic';
 
+/**
+ * `SignupPage` component renders the user interface for the signup functionality.
+ * It allows users to create a new account by entering their details.
+ *
+ * This component utilizes the `useSignupLogic` hook to manage its state,
+ * including the first name, last name, email, password, confirmation password,
+ * and error messages.
+ *
+ * The UI includes:
+ * - A logo ("ClassTAP").
+ * - A form with fields for first name, last name, email, password, and confirmation password.
+ * - A "Stay Logged-In Session?" checkbox.
+ * - A link to navigate to the login page if the user already has an account.
+ * - A "Signup" button to submit the form.
+ * - Display area for error messages returned from the signup process.
+ *
+ * It uses Material-UI components for styling and layout, ensuring a responsive design.
+ *
+ * @returns {JSX.Element} The rendered signup page.
+ */
 export function SignupPage() {
   const {
     firstName,
