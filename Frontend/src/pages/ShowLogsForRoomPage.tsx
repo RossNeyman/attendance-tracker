@@ -4,10 +4,37 @@ import NavBar from '../components/NavBar';
 import { useLogsLogic } from '../hooks/useLogsLogic';
 import DogError from '../components/DogError';
 
-/*
- * Logs Component
- * This component fetches and displays attendance logs for a specific room and week.
- * It allows users to select a week and view the corresponding logs.
+/**
+ * @remarks
+ * This component is responsible for displaying attendance logs for a specific room.
+ * It utilizes the `useLogsLogic` custom hook to manage the state and logic for fetching
+ * and displaying weeks and their corresponding attendance logs.
+ *
+ * The component handles various states:
+ * - Loading state while fetching weeks.
+ * - Error state if fetching weeks fails, displaying an error message and a `DogError` component.
+ * - Error state if fetching logs fails, displaying an error message and a `DogError` component.
+ * - Success state for weeks:
+ *   - If no weeks are available, it displays a message indicating so.
+ *   - Otherwise, it presents a dropdown (`Select`) for the user to choose a week.
+ *   - A button is provided to navigate to a scanner page for the current room.
+ * - Loading state while fetching logs for a selected week.
+ * - Success state for logs:
+ *   - If logs are available for the selected week, they are displayed in a table with timestamp and attendee email.
+ *   - If no logs are available for the selected week, a message indicates this.
+ * - A default message prompts the user to select a week if weeks are loaded but no week is yet selected.
+ * - A generic "Something went wrong" message is displayed as a fallback if none of the above conditions are met.
+ *
+ * It includes a `NavBar` component at the top of the page.
+ * Material UI components are used for styling and layout.
+ *
+ * @example
+ * ```tsx
+ * import Logs from './ShowLogsForRoomPage';
+ *
+ * // In a router or page component
+ * <Logs />
+ * ```
  */
 const Logs: React.FC = () => {
     const {

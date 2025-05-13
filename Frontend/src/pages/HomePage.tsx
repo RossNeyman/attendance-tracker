@@ -22,6 +22,31 @@ import ArchivedRoomCard from '../components/rooms/ArchivedRoomCard';
 import DogError from '../components/DogError';
 import { useHomeLogic } from '../hooks/useHomeLogic';
 
+/**
+ * `Home` component serves as the main page for displaying and managing user's rooms.
+ * It fetches and displays active rooms, allows creation of new rooms, and provides
+ * functionality to view archived rooms.
+ *
+ * This component handles:
+ * - Fetching active and archived room data using RTK Query hooks (`useGetActiveRoomsQuery`, `useGetArchivedRoomsQuery`).
+ * - Displaying loading states during data fetching and user authentication.
+ * - Showing an error component (`DogError`) if any data fetching or operation fails.
+ * - Rendering a list of `RoomCard` components for active rooms.
+ * - Providing a form to create a new room.
+ * - Allowing users to toggle the visibility of archived rooms.
+ * - Rendering a list of `ArchivedRoomCard` components for archived rooms when shown.
+ * - Implementing a "see more" functionality for paginating through archived rooms.
+ * - Utilizing the `useHomeLogic` custom hook to encapsulate business logic for room operations
+ *   (adding, clicking, renaming, archiving, unarchiving, deleting rooms).
+ *
+ * State managed by the component:
+ * - `newRoomName`: The name for a new room being created.
+ * - `operationError`: Stores any error that occurs during room operations.
+ * - `showArchived`: Boolean flag to control the visibility of the archived rooms section.
+ * - `visibleArchivedCount`: Number of archived rooms currently visible (for "see more" functionality).
+ *
+ * @returns {JSX.Element} The rendered Home page component.
+ */
 export function Home() {
   const theme = useTheme();
   const [newRoomName, setNewRoomName] = useState('');

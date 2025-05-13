@@ -10,19 +10,19 @@ import { store } from './app/store';
 import { Login } from './pages/LoginPage.tsx';
 import { Home } from './pages/HomePage.tsx';
 import { SignupPage } from './pages/SignupPage.tsx';
-import { ForgotPassword } from './pages/ForgotPasswordPage.tsx';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage.tsx';
 import {ResetPassword} from './pages/ResetPasswordPage.tsx';
 import Logs from './pages/ShowLogsForRoomPage.tsx';
-import { AccountSettings } from './pages/AccountSettingsPage.tsx';
+import { AccountSettingsPage } from './pages/AccountSettingsPage.tsx';
 
 function App() {
   return (
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path="/account" element={<AccountSettings />} />
+          <Route path="/account" element={<AccountSettingsPage />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/scanner/:userId/:roomId" element={<QrScannerPage />} />
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignupPage />} />

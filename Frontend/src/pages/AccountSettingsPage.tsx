@@ -10,7 +10,8 @@ import {
 import NavBar from "../components/NavBar";
 import { useAccountSettingsLogic } from "../hooks/useAccountSettingsLogic";
 
-export function AccountSettings() {
+
+export function AccountSettingsPage() {
   const {
     firstName,
     setFirstName,
