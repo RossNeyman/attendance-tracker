@@ -18,6 +18,26 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useLoginLogic } from '../hooks/useLoginLogic';
 
+/**
+ * `Login` component renders the user interface for the login functionality.
+ * It allows users to enter their username and password to access the application.
+ *
+ * This component utilizes the `useLoginLogic` hook to manage its state,
+ * including the username, password, visibility of the password, error messages,
+ * and form submission logic.
+ *
+ * The UI includes:
+ * - A logo ("ClassTAP").
+ * - A form with username and password input fields.
+ * - A "Stay Logged-In Session?" checkbox.
+ * - Links for creating an account and recovering a password.
+ * - A "Login" button to submit the form.
+ * - Display area for error messages returned from the login process.
+ *
+ * It uses Material-UI components for styling and layout, ensuring a responsive design.
+ *
+ * @returns {JSX.Element} The rendered login page.
+ */
 export function Login() {
   const {
     showPassword,

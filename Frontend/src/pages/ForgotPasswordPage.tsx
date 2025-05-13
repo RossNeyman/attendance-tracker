@@ -10,7 +10,25 @@ import {
 } from '@mui/material';
 import { useForgotPasswordLogic } from '../hooks/useForgotPasswordLogic';
 
-export function ForgotPassword() {
+/**
+ * `ForgotPasswordPage` component renders the user interface for the forgot password functionality.
+ * It allows users to enter their email address to receive a password reset link.
+ *
+ * This component utilizes the `useForgotPasswordLogic` hook to manage its state,
+ * including the email input, success/error messages, and form submission logic.
+ *
+ * The UI includes:
+ * - A logo ("ClassTAP").
+ * - A form with an email input field.
+ * - A "Send Reset Link" button to submit the request.
+ * - A "Back to Login" button to navigate back to the login page.
+ * - Display areas for success or error messages returned from the password reset process.
+ *
+ * It uses Material-UI components for styling and layout, ensuring a responsive design.
+ *
+ * @returns {JSX.Element} The rendered forgot password page.
+ */
+export function ForgotPasswordPage() {
   const {
     email,
     setEmail,
@@ -183,4 +201,4 @@ export function ForgotPassword() {
   );
 }
 
-export default ForgotPassword;
+export default ForgotPasswordPage;

@@ -9,6 +9,17 @@ import {
 import { QrScanner } from "../components/QrScanner";
 import { useQrScannerPageLogic } from "../hooks/useQrScannerLogic";
 
+/**
+ * QrScannerPage component renders the QR code scanner and generator interface.
+ * It allows users to scan a QR code or generate a new one by entering their details.
+ *
+ * The page consists of:
+ * 1. An exit button to leave the page.
+ * 2. A camera scanner section for scanning QR codes.
+ * 3. A QR code generation section with input fields for first name, last name, and email.
+ *
+ * @returns {JSX.Element} The rendered QR Scanner page.
+ */
 export function QrScannerPage() {
   const {
     firstName,
